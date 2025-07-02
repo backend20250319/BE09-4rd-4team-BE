@@ -1,1 +1,7 @@
-spring.application.name=oliveyoung
+#spring.application.name=oliveyoung
+
+jwt:
+  secret: your_jwt_secret_base64_key_here
+  expiration: 3600000
+  header: Authorization
+  prefix: Bearer
