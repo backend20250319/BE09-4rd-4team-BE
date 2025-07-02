@@ -1,4 +1,4 @@
-package com.oliveyoung.admin.domain;
+package olive.oliveyoung.admin.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

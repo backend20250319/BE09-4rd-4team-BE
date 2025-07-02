@@ -1,13 +1,13 @@
-package com.oliveyoung.admin;
+package olive.oliveyoung;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OliveyoungAdminApplicationTests {
+class OliveyoungApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
