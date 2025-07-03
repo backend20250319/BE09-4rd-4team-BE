@@ -4,37 +4,33 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import olive.oliveyoung.member.user.Role;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
-/* 토큰 발급/검증/정보 추출을 담당하는 JWT 유틸 
-* 토큰에는 사용자 ID, 권한, 만료 시간 등의 다양한 정보가 포함 -> 이 파일에서 지정
-* */
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${jwt.expiration}")
-    private long jwtExpirationInMs;
+    private final JwtConfig jwtConfig; // ✅ 설정 클래스 주입
 
     private SecretKey secretKey;
 
     @PostConstruct
     public void init() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getJwtSecret());
         secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 1. 토큰 생성
-    public String generateToken(Map<String, Object> claims) {
+    // 1. Access Token 생성
+    public String generateAccessToken(Map<String, Object> claims) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getJwtExpiration());
 
         return Jwts.builder()
                 .claims(claims)
@@ -44,7 +40,22 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 2. 토큰 유효성 검증
+    // 2. Refresh Token 생성
+    public String generateRefreshToken(String userId, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getJwtRefreshExpiration());
+
+        return Jwts.builder()
+                .subject(userId)
+                .claim("role", role)
+                .claim("user_id", userId)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // 3. 토큰 유효성 검증 (예외 던짐)
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
@@ -52,12 +63,18 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new BadCredentialsException("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            throw new BadCredentialsException("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            throw new BadCredentialsException("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            throw new BadCredentialsException("JWT claims string is empty", e);
         }
     }
 
-    // 3. Claims 추출 (id, role, gender, age 등)
+    // 4. Claims 추출
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -66,13 +83,29 @@ public class JwtTokenProvider {
                 .getPayload();
     }
 
-    public String getIdFromJWT(String token) {
-        return getClaims(token).get("id", String.class);
+    // 5. Claims 기반 정보 추출
+    public Long getUserNoFromJWT(String token) {
+        return getClaims(token).get("user_no", Long.class);
     }
 
-    public String getRoleFromJWT(String token) {
-        return getClaims(token).get("role", String.class);
+    public String getUserIdFromJWT(String token) {
+        return getClaims(token).get("user_id", String.class);
     }
 
+    public String getUserNameFromJWT(String token) {
+        return getClaims(token).get("name", String.class);
+    }
 
+    public Role getRoleFromJWT(String token) {
+        try {
+            String roleStr = getClaims(token).get("role", String.class);
+            return Role.valueOf(roleStr);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new RuntimeException("Invalid role in token", e);
+        }
+    }
+
+    public long getRefreshExpiration() {
+        return jwtConfig.getJwtRefreshExpiration();
+    }
 }
