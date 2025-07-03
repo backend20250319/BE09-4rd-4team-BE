@@ -1,6 +1,7 @@
 package olive.oliveyoung.admin.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class StockLog {
     private int beforeStock;
     private int afterStock;
 
+    @CreationTimestamp
     private LocalDateTime changedAt;
 
     private String reason;

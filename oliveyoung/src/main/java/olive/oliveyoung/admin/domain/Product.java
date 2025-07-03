@@ -5,14 +5,30 @@ import jakarta.persistence.*;
 @Entity
 public class Product {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-    private String name;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productId;
 
-    @ManyToOne
-    @JoinColumn(name ="category_id")
+    @Column(nullable = false)
+    private String productName;
+
+    @Lob
+    private String description;
+
+    private Integer price;
+    private Integer stock;
+
+    private String imageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

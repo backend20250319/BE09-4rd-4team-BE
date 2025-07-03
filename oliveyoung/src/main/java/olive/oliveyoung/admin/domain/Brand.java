@@ -1,18 +1,14 @@
 package olive.oliveyoung.admin.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="BRAND")
 public class Brand {
 
     @Id
-    @GeneratedValue
-    private Long id;
-    private String name;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long brandId;
+    private String brandName;
 
 }
