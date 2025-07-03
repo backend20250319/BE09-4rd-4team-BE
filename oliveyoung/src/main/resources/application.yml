@@ -1,7 +1,18 @@
 #spring.application.name=oliveyoung
 
+spring:
+  datasource:
+    url: jdbc:mysql://mysql.coffit.xyz:3322/olivedb
+    username: olive
+    password: olive
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
 jwt:
-  secret: your_jwt_secret_base64_key_here
+  secret: ${JWT_SECRET_KEY}
   expiration: 3600000
   header: Authorization
   prefix: Bearer
