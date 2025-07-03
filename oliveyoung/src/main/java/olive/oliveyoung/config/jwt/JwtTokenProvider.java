@@ -12,6 +12,10 @@ import java.util.Date;
 import java.util.Map;
 
 //@Component
+/* 토큰 발급/검증/정보 추출을 담당하는 JWT 유틸
+* 토큰에는 사용자 ID, 권한, 만료 시간 등의 다양한 정보가 포함 -> 이 파일에서 지정
+* */
+@Component
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
