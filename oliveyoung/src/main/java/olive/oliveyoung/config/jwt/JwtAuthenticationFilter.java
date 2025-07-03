@@ -1,4 +1,4 @@
-package olive.oliveyoung.config;
+package olive.oliveyoung.config.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-
+/* 요청 헤더의 JWT를 파싱해 인증 처리하는 필터 */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

@@ -1,10 +1,11 @@
-package olive.oliveyoung.config;
+package olive.oliveyoung.config.jwt;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/* JWT 관련 환경변수 또는 상수 모음 */
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Getter
