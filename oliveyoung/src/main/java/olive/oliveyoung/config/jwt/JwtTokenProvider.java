@@ -1,4 +1,4 @@
-package olive.oliveyoung.config;
+package olive.oliveyoung.config.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -11,6 +11,9 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
+/* 토큰 발급/검증/정보 추출을 담당하는 JWT 유틸 
+* 토큰에는 사용자 ID, 권한, 만료 시간 등의 다양한 정보가 포함 -> 이 파일에서 지정
+* */
 @Component
 public class JwtTokenProvider {
 
@@ -71,11 +74,5 @@ public class JwtTokenProvider {
         return getClaims(token).get("role", String.class);
     }
 
-    public String getGenderFromJWT(String token) {
-        return getClaims(token).get("gender", String.class);
-    }
 
-    public Integer getAgeFromJWT(String token) {
-        return getClaims(token).get("age", Integer.class);
-    }
 }
