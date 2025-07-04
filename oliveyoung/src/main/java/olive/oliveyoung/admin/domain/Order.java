@@ -1,21 +1,17 @@
 package olive.oliveyoung.admin.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 @Entity
 public class Order {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderItemId;
+    @Id @GeneratedValue
+    private Long id; // 동일 ID로 공유 가능
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id",nullable = false )
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="product_id", nullable = false)
-    private Product product;
-
-    private Integer quantity;
+    private OrderStatus status;
+    private boolean flagged; // 이상 주문 여부
+    private String memo;     // 처리 내역 메모
 
 }
