@@ -5,14 +5,15 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-/* JWT 관련 환경변수 또는 상수 모음 */
+/* JWT 관련 환경변수 모음 */
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Getter
 @Setter
 public class JwtConfig {
-    private String secret;
-    private long expiration;
+    private String jwtSecret;
+    private long jwtExpiration;
+    private long jwtRefreshExpiration; // ✅ 추가
     private String header;
     private String prefix;
 }
