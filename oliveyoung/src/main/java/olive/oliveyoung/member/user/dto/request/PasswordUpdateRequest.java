@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/* 비밀번호를 수정할 때 쓰는 request dto */
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/* 로그인할 때 쓰는 request dto */
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import jakarta.annotation.PostConstruct; // Import PostConstruct
 
 /* JWT 관련 환경변수 모음 */
 @Configuration
@@ -16,4 +17,9 @@ public class JwtConfig {
     private long jwtRefreshExpiration; // ✅ 추가
     private String header;
     private String prefix;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("JWT Secret Key loaded: " + (jwtSecret != null ? jwtSecret.substring(0, Math.min(jwtSecret.length(), 10)) + "..." : "null"));
+    }
 }

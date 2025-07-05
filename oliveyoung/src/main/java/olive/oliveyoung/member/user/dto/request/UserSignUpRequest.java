@@ -3,7 +3,6 @@ package olive.oliveyoung.member.user.dto.request;
 import lombok.*;
 
 /* 회원가입 시 전송하는 request dto */
-
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor

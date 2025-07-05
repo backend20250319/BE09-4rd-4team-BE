@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor // JSON -> Java Object 변환을 위해 필요
 @AllArgsConstructor
 @Builder
-public class UserCheckBeforeSighUpRequest {
+public class UserCheckBeforeSignUpRequest {
 
     private String userName;
     private String phone;
