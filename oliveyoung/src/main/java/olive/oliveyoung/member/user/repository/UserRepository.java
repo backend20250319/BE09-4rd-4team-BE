@@ -1,7 +1,19 @@
 package olive.oliveyoung.member.user.repository;
 
-public class UserRepository {
-    public boolean existsByUserId(String userId) {
-        return false;
-    }
+import olive.oliveyoung.member.user.domain.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByUserId(String userId);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByUserId(String userId);
+
+    Optional<User> findByProviderAndProviderId(String provider, String providerId);
 }

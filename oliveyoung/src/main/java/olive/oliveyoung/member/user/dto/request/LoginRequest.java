@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class LoginRequest {
-    private String userID;
+    private String userId;
     private String password;
 }

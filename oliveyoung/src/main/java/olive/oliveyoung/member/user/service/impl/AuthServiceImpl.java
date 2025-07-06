@@ -3,22 +3,29 @@ package olive.oliveyoung.member.user.service.impl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.config.jwt.JwtTokenProvider;
+import olive.oliveyoung.member.user.domain.RefreshToken;
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.LoginRequest;
 import olive.oliveyoung.member.user.dto.response.TokenResponse;
+import olive.oliveyoung.member.user.repository.RefreshTokenRepository;
+import olive.oliveyoung.member.user.repository.UserRepository;
 import olive.oliveyoung.member.user.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
     @Override
@@ -27,17 +34,21 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new BadCredentialsException("올바르지 않은 아이디 혹은 비밀번호"));
 
-        if(!passwordEncoder.matches(loginRequest.getPassword(), user.getUserPwd())) {
+        if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("올바르지 않은 아이디 혹은 비밀번호");
         }
 
-        String accessToken = jwtTokenProvider.createToken(
-                user.getUserId(),
-                user.getRole().name(),
-                user.getGender(),
-                user.getAge()
-        );
-        String refreshToken = jwtTokenProvider.createRefreshToken(user.getUserId(), user.getRole().name());
+        // AccessToken에 담을 Claims 생성
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_no", user.getUserNo());
+        claims.put("user_id", user.getUserId());
+        claims.put("user_name", user.getUserName());
+        claims.put("role", user.getRole().name());
+
+        String accessToken = jwtTokenProvider.generateAccessToken(claims);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUserId(), user.getRole().name());
+
+        // TODO: RefreshToken 엔티티 및 Repository를 정의하고 아래 주석을 해제하여 리프레시 토큰 저장 로직을 완성해야 합니다.
 
         RefreshToken tokenEntity = RefreshToken.builder()
                 .userId(user.getUserId())
@@ -58,13 +69,53 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponse refresh(HttpServletRequest request) {
-    // TODO: 토큰 재발급 로직 구현
-        return null;
+        String refreshToken = jwtTokenProvider.resolveToken(request); // HttpServletRequest에서 토큰 추출
+        
+        if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken)) {
+            throw new BadCredentialsException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        String userId = jwtTokenProvider.getUserIdFromJWT(refreshToken);
+        
+        RefreshToken storedRefreshToken = refreshTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadCredentialsException("리프레시 토큰을 찾을 수 없습니다. 다시 로그인해주세요."));
+
+        if (!storedRefreshToken.getToken().equals(refreshToken)) {
+            throw new BadCredentialsException("저장된 리프레시 토큰과 일치하지 않습니다.");
+        }
+
+        // 새로운 Access Token 생성
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id", userId);
+        claims.put("role", jwtTokenProvider.getRoleFromJWT(refreshToken).name());
+        // user_no는 refresh token에 없으므로, 필요하다면 userRepository에서 user를 다시 조회하여 추가해야 합니다.
+        // User user = userRepository.findByUserId(userId).orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
+        // claims.put("user_no", user.getUserNo());
+        // claims.put("user_name", user.getUserName());
+
+        String newAccessToken = jwtTokenProvider.generateAccessToken(claims);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId, jwtTokenProvider.getRoleFromJWT(refreshToken).name());
+
+        // Refresh Token 업데이트
+        storedRefreshToken.updateToken(newRefreshToken, new Date(System.currentTimeMillis() + jwtTokenProvider.getRefreshExpiration()));
+        refreshTokenRepository.save(storedRefreshToken);
+
+        return TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
 
     @Override
     public void logout(HttpServletRequest request) {
-    // TODO: 로그아웃 로직 구현
+        String refreshToken = jwtTokenProvider.resolveToken(request);
+
+        if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken)) {
+            throw new BadCredentialsException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        String userId = jwtTokenProvider.getUserIdFromJWT(refreshToken);
+        refreshTokenRepository.deleteByUserId(userId);
     }
 }
 

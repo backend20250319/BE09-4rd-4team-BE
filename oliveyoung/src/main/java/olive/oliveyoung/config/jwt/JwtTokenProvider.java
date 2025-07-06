@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.Role;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -105,7 +106,16 @@ public class JwtTokenProvider {
         }
     }
 
-    public long getRefreshExpiration() {
+    public Long getRefreshExpiration() {
         return jwtConfig.getJwtRefreshExpiration();
+    }
+
+    // HttpServletRequest에서 토큰 추출
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(jwtConfig.getHeader());
+        if (bearerToken != null && bearerToken.startsWith(jwtConfig.getPrefix() + " ")) {
+            return bearerToken.substring(jwtConfig.getPrefix().length() + 1);
+        }
+        return null;
     }
 }
