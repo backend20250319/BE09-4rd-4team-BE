@@ -14,7 +14,7 @@ import jakarta.annotation.PostConstruct; // Import PostConstruct
 public class JwtConfig {
     private String secret;
     private long jwtExpiration;
-    private long jwtRefreshExpiration; // ✅ 추가
+    private long jwtRefreshExpiration;
     private String header;
     private String prefix;
 

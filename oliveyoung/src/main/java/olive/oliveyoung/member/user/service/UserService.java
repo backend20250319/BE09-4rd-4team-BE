@@ -4,12 +4,10 @@ import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 
 
-public class UserService {
+public interface UserService {
 
-    public void signUp(UserSignUpRequest request) {
+    public void signUp(UserSignUpRequest request);
 
-    }
+    public void withdraw(String username, UserWithdrawRequest request);
 
-    public void withdraw(String username, UserWithdrawRequest request) {
-    }
 }

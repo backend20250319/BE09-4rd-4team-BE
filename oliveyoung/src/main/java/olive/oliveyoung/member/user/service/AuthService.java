@@ -6,16 +6,10 @@ import olive.oliveyoung.member.user.dto.response.TokenResponse;
 
 public interface AuthService {
 
-    public TokenResponse login(LoginRequest loginRequest) {
-        return null;
-    }
+    public TokenResponse login(LoginRequest loginRequest);
 
-    public TokenResponse refresh(HttpServletRequest request) {
-        return null;
-    }
+    public TokenResponse refresh(HttpServletRequest request);
 
-    public void logout(HttpServletRequest request) {
-    }
-
+    public void logout(HttpServletRequest request);
 
 }
