@@ -10,9 +10,11 @@ import olive.oliveyoung.member.user.Role;
 @AllArgsConstructor
 @Builder
 public class AdminUserSummaryResponse {
+
     private Long userId;
+    private String userName;
     private String email;
-    private String name;
+    private String phone;
     private Role role;
     private java.time.LocalDateTime createdAt;
 }

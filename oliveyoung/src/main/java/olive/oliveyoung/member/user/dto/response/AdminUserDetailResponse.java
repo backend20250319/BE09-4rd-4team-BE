@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class AdminUserDetailResponse {
     private Long userId;
+    private String userName;
     private String email;
-    private String name;
-    private String nickname;
-    private Role role;
+    private String phone;
     private LocalDateTime createdAt;
 }

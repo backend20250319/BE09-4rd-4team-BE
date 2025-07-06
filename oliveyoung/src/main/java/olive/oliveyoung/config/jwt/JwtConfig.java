@@ -12,7 +12,7 @@ import jakarta.annotation.PostConstruct; // Import PostConstruct
 @Getter
 @Setter
 public class JwtConfig {
-    private String jwtSecret;
+    private String secret;
     private long jwtExpiration;
     private long jwtRefreshExpiration; // ✅ 추가
     private String header;
@@ -20,6 +20,6 @@ public class JwtConfig {
 
     @PostConstruct
     public void init() {
-        System.out.println("JWT Secret Key loaded: " + (jwtSecret != null ? jwtSecret.substring(0, Math.min(jwtSecret.length(), 10)) + "..." : "null"));
+        System.out.println("JWT Secret Key loaded: " + (secret != null ? secret.substring(0, Math.min(secret.length(), 10)) + "..." : "null"));
     }
 }
