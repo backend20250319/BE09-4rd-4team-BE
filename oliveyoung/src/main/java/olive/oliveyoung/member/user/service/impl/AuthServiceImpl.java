@@ -13,6 +13,7 @@ import olive.oliveyoung.member.user.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
+    @Transactional
     @Override
     public TokenResponse login(LoginRequest loginRequest) {
 
@@ -48,8 +50,6 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(claims);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUserId(), user.getRole().name());
 
-        // TODO: RefreshToken 엔티티 및 Repository를 정의하고 아래 주석을 해제하여 리프레시 토큰 저장 로직을 완성해야 합니다.
-
         RefreshToken tokenEntity = RefreshToken.builder()
                 .userId(user.getUserId())
                 .token(refreshToken)
@@ -67,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Transactional
     @Override
     public TokenResponse refresh(HttpServletRequest request) {
         String refreshToken = jwtTokenProvider.resolveToken(request); // HttpServletRequest에서 토큰 추출
@@ -87,8 +88,8 @@ public class AuthServiceImpl implements AuthService {
         // 새로운 Access Token 생성
         Map<String, Object> claims = new HashMap<>();
         claims.put("user_id", userId);
+        claims.put("user_name", jwtTokenProvider.getUserNameFromJWT(refreshToken));
         claims.put("role", jwtTokenProvider.getRoleFromJWT(refreshToken).name());
-        // user_no는 refresh token에 없으므로, 필요하다면 userRepository에서 user를 다시 조회하여 추가해야 합니다.
         // User user = userRepository.findByUserId(userId).orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
         // claims.put("user_no", user.getUserNo());
         // claims.put("user_name", user.getUserName());
@@ -106,6 +107,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Transactional
     @Override
     public void logout(HttpServletRequest request) {
         String refreshToken = jwtTokenProvider.resolveToken(request);

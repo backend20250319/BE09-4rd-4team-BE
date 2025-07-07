@@ -10,4 +10,5 @@ public interface UserService {
 
     public void withdraw(String username, UserWithdrawRequest request);
 
+    boolean existsByUserNameAndPhone(String userName, String phone);
 }
