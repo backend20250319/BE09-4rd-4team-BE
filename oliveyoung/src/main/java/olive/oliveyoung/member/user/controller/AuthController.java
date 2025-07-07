@@ -4,16 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.common.ApiResponse;
 import olive.oliveyoung.member.user.dto.request.LoginRequest;
-import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
-import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.dto.response.TokenResponse;
 import olive.oliveyoung.member.user.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.userdetails.User;
-
 
 /* 로그인, 토큰 생성/검증, 로그아웃 처리 */
 @RestController
