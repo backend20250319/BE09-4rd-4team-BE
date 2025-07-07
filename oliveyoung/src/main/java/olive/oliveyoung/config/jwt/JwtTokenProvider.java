@@ -48,7 +48,7 @@ public class JwtTokenProvider {
     public String generateRefreshToken(String userId, String role) {
         Date now = new Date();
         long refreshExpirationMillis = jwtConfig.getRefreshExpiration();
-        System.out.println("Refresh Token Expiration (ms): " + refreshExpirationMillis);
+//        System.out.println("Refresh Token Expiration (ms): " + refreshExpirationMillis);
         Date expiryDate = new Date(now.getTime() + refreshExpirationMillis);
 
         return Jwts.builder()
