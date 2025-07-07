@@ -23,6 +23,14 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     /**
+     * 회원가입 전 회원 중복 체크
+     */
+    @Override
+    public boolean existsByUserNameAndPhone(String userName, String phone) {
+        return userRepository.existsByUserNameAndPhone(userName, phone);
+    }
+
+    /**
      * 회원가입
      */
     @Transactional

@@ -10,12 +10,12 @@ import olive.oliveyoung.member.user.common.entity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "user") // 'user' 테이블과 매핑됨을 명시
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment
-    @Column(name = "user_no") // PK 컬럼 이름 지정
+    @Column(name = "user_no")
     private Long userNo;
 
     @Column(name = "user_id", nullable = false, unique = true, length = 50)
