@@ -3,7 +3,6 @@ package olive.oliveyoung.member.user.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import olive.oliveyoung.member.user.Role;
 
 import java.time.LocalDateTime;
 

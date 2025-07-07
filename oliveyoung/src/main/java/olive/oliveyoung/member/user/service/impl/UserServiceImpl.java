@@ -2,9 +2,9 @@ package olive.oliveyoung.member.user.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import olive.oliveyoung.config.jwt.JwtTokenProvider;
-import olive.oliveyoung.member.user.Role;
+import olive.oliveyoung.member.user.domain.Role;
 import olive.oliveyoung.member.user.domain.User;
+import olive.oliveyoung.member.user.dto.request.PasswordUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.repository.RefreshTokenRepository;
@@ -74,4 +74,26 @@ public class UserServiceImpl implements UserService {
         // 사용자 삭제
         userRepository.delete(user);
     }
+
+    /**
+     * 회원 비밀번호 수정
+     */
+    @Transactional
+    @Override
+    public void updatePassword(String userId, PasswordUpdateRequest request) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
+
+        // 현재 비밀번호 확인
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호 암호화 및 업데이트
+        String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+        user.updatePassword(encodedNewPassword); // User 엔티티에 비밀번호 업데이트 메서드 추가 필요
+
+        userRepository.save(user);
+    }
 }
+
