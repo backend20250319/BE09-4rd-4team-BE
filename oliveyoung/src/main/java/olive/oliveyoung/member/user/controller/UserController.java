@@ -6,6 +6,7 @@ import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.DuplicateCheckRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
+import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +79,23 @@ public class UserController {
                         .timestamp(LocalDateTime.now())
                         .build()
         );
+    }
+
+    /**
+     * 로그인한 사용자가 자신의 정보를 확인
+     */
+    @GetMapping("/mypage/info")
+    public ResponseEntity<ApiResponse<UserInfoResponse>> getUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
+        UserInfoResponse userInfoResponse = new UserInfoResponse(
+                user.getUserId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getPhone()
+
+        );
+        return ResponseEntity.ok(ApiResponse.success(userInfoResponse, HttpStatus.OK.value()));
     }
 }
 

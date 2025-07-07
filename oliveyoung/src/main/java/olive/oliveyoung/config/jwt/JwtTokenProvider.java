@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import olive.oliveyoung.member.user.Role;
+import olive.oliveyoung.member.user.domain.Role;
 import olive.oliveyoung.member.user.domain.User; // User import 추가
 import olive.oliveyoung.member.user.repository.UserRepository; // UserRepository import 추가
 import org.springframework.security.authentication.BadCredentialsException;

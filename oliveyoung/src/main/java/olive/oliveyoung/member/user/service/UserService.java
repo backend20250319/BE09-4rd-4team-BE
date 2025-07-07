@@ -1,14 +1,17 @@
 package olive.oliveyoung.member.user.service;
 
+import olive.oliveyoung.member.user.dto.request.PasswordUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 
 
 public interface UserService {
 
-    public void signUp(UserSignUpRequest request);
+    void signUp(UserSignUpRequest request);
 
-    public void withdraw(String username, UserWithdrawRequest request);
+    void withdraw(String username, UserWithdrawRequest request);
 
     boolean existsByUserNameAndPhone(String userName, String phone);
+
+    void updatePassword(String userId, PasswordUpdateRequest request);
 }
