@@ -8,6 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brands, Long> {
-    // 필요시 브랜드 이름으로 조회하는 메서드 추가
-    // Optional<Brands> findByBrandName(String brandName);
 }

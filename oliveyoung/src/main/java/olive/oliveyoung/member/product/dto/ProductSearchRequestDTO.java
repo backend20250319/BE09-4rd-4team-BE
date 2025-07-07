@@ -15,7 +15,6 @@ public class ProductSearchRequestDTO {
     private String categoryName;
     private Integer minPrice;
     private Integer maxPrice;
-    private String sortBy; // 정렬 기준 (price, popularity, etc.)
-    private String sortDirection; // 정렬 방향 (asc, desc)
-    // 페이지네이션 및 정렬 관련 필드 추가 가능 (page, size, sortBy, sortDir 등)
+    private String sortBy;
+    private String sortDirection;
 }

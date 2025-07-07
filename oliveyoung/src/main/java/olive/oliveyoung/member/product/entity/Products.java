@@ -46,15 +46,13 @@ public class Products {
     @Column(name = "image_url")
     private String imageUrl;
 
-    // ⭐️ 새로 추가할 필드: 상품 등록일시 (신상품 순 정렬 기준)
     @Column(name = "created_at", nullable = false, updatable = false) // 생성 시간은 변경되지 않음
     private LocalDateTime createdAt;
 
-    // ⭐️ 새로 추가할 필드: 상품 판매량 (판매 순 정렬 기준)
     @Column(name = "sales_count", nullable = false)
     private Integer salesCount;
 
-    @Column(name = "discount_rate") // 할인율
+    @Column(name = "discount_rate")
     private Integer discountRate;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -69,7 +67,7 @@ public class Products {
     @JoinColumn(name = "brand_id", nullable = false)
     private Brands brand;
 
-    // Entity가 처음 저장될 때(Persist) 자동으로 호출되어 필드를 초기화합니다.
+    // Entity가 처음 저장될 때(Persist) 자동으로 호출되어 필드를 초기화한다.
     @PrePersist // 엔티티가 저장되기 전에 실행
     protected void onCreate() {
         if (createdAt == null) {
@@ -78,23 +76,21 @@ public class Products {
         if (salesCount == null) {
             salesCount = 0; // 초기 판매량 0
         }
-        // ⭐⭐⭐ 할인율 계산 로직 수정: Integer 타입에 맞게 반올림 및 캐스팅 ⭐⭐⭐
         if (originalPrice != null && originalPrice > 0) {
             double calculatedRate = ((double)(originalPrice - discountedPrice) / originalPrice) * 100.0;
-            this.discountRate = (int) Math.round(calculatedRate); // Double -> Integer로 반올림하여 캐스팅
+            this.discountRate = (int) Math.round(calculatedRate);
         } else {
-            this.discountRate = 0; // Integer 타입에 맞게 0으로 초기화
+            this.discountRate = 0;
         }
     }
 
     @PreUpdate // 엔티티가 업데이트되기 전에 실행
     protected void onUpdate() {
-        // ⭐⭐⭐ 업데이트 시에도 할인율 재계산: Integer 타입에 맞게 반올림 및 캐스팅 ⭐⭐⭐
         if (originalPrice != null && originalPrice > 0) {
             double calculatedRate = ((double)(originalPrice - discountedPrice) / originalPrice) * 100.0;
-            this.discountRate = (int) Math.round(calculatedRate); // Double -> Integer로 반올림하여 캐스팅
+            this.discountRate = (int) Math.round(calculatedRate);
         } else {
-            this.discountRate = 0; // Integer 타입에 맞게 0으로 초기화
+            this.discountRate = 0; 
         }
     }
 

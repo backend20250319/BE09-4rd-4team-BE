@@ -20,7 +20,28 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductResponseDTO> getAllProducts(String sortBy, String sortDirection) {
+    // ⭐⭐⭐ 새로운 상품 상세 조회 메서드 추가 (문자열 식별자 사용) ⭐⭐⭐
+    public Optional<ProductResponseDTO> getSkinTonerProductByIdentifier(String productIdentifier) {
+        Long actualProductId = convertIdentifierToId(productIdentifier);
+
+        if (actualProductId == null) {
+            return Optional.empty();
+        }
+
+        return productRepository.findById(actualProductId)
+                .map(ProductResponseDTO::new);
+    }
+
+    // Helper method to convert string identifier to actual product ID
+    private Long convertIdentifierToId(String identifier) {
+        if ("product1".equalsIgnoreCase(identifier)) {
+            return 1L;
+        }
+        return null;
+    }
+
+    // ⭐⭐⭐ 중복 제거를 위해 정렬 로직을 분리한 헬퍼 메서드 ⭐⭐⭐
+    private Sort createSort(String sortBy, String sortDirection) {
         Sort.Direction direction = Sort.Direction.ASC;
         if (sortDirection != null && sortDirection.equalsIgnoreCase("desc")) {
             direction = Sort.Direction.DESC;
@@ -37,30 +58,31 @@ public class ProductService {
                     sortProperty = "createdAt";
                     break;
                 case "sold":
-                    sortProperty = "salesCount"; // 판매량 정렬은 'popular'와 동일할 수 있음
+                    sortProperty = "salesCount";
                     break;
                 case "lowprice":
-                    sortProperty = "discountedPrice"; // 할인된 가격 낮은 순
-                    direction = Sort.Direction.ASC; // 낮은 가격은 오름차순으로 정렬
+                    sortProperty = "discountedPrice";
+                    direction = Sort.Direction.ASC;
                     break;
-                case "highprice": // 고가 순 추가 (선택 사항)
+                case "highprice":
                     sortProperty = "discountedPrice";
                     direction = Sort.Direction.DESC;
                     break;
                 case "discount":
-                    // ⭐⭐⭐ 가장 중요한 변경: Products 엔티티의 실제 discountRate 필드 사용 ⭐⭐⭐
                     sortProperty = "discountRate";
-                    // 할인율은 보통 높은 순서 (내림차순)으로 표시되므로, desc로 강제하거나
-                    // 파라미터를 통해 전달받는 'direction'을 그대로 사용합니다.
-                    // 현재 코드에서는 파라미터 direction을 따르므로 변경 없음.
                     break;
                 default:
-                    sortProperty = sortBy; // 클라이언트에서 직접 필드명을 넘겨줄 경우 대비
+                    // 클라이언트에서 직접 필드명을 넘겨줄 경우, 해당 필드명이 Products 엔티티에 있는지 확인하는
+                    // 추가적인 유효성 검사 로직이 필요할 수 있다.
+                    sortProperty = sortBy;
                     break;
             }
         }
+        return Sort.by(direction, sortProperty);
+    }
 
-        Sort sort = Sort.by(direction, sortProperty);
+    public List<ProductResponseDTO> getAllProducts(String sortBy, String sortDirection) {
+        Sort sort = createSort(sortBy, sortDirection); // ⭐ 헬퍼 메서드 호출 ⭐
         List<Products> products = productRepository.findAll(sort);
         return products.stream()
                 .map(ProductResponseDTO::new)
@@ -73,45 +95,11 @@ public class ProductService {
     }
 
     public List<ProductResponseDTO> searchProducts(ProductSearchRequestDTO searchRequest) {
-        Sort.Direction direction = Sort.Direction.ASC;
-        if (searchRequest.getSortDirection() != null && searchRequest.getSortDirection().equalsIgnoreCase("desc")) {
-            direction = Sort.Direction.DESC;
-        }
-
-        String sortProperty = "productId"; // 기본 정렬 필드
-        if (searchRequest.getSortBy() != null && !searchRequest.getSortBy().isEmpty()) {
-            switch (searchRequest.getSortBy().toLowerCase()) {
-                case "popular":
-                    sortProperty = "salesCount";
-                    break;
-                case "new":
-                    sortProperty = "createdAt";
-                    break;
-                case "sold":
-                    sortProperty = "salesCount"; // 판매량 정렬은 'popular'와 동일할 수 있음
-                    break;
-                case "lowprice":
-                    sortProperty = "discountedPrice"; // 할인된 가격 낮은 순
-                    direction = Sort.Direction.ASC; // 낮은 가격은 오름차순으로 정렬
-                    break;
-                case "highprice": // 고가 순 추가 (선택 사항)
-                    sortProperty = "discountedPrice";
-                    direction = Sort.Direction.DESC;
-                    break;
-                case "discount":
-                    // ⭐⭐⭐ 가장 중요한 변경: Products 엔티티의 실제 discountRate 필드 사용 ⭐⭐⭐
-                    sortProperty = "discountRate";
-                    break;
-                default:
-                    sortProperty = searchRequest.getSortBy(); // 클라이언트에서 직접 필드명을 넘겨줄 경우 대비
-                    break;
-            }
-        }
-        Sort sort = Sort.by(direction, sortProperty);
+        // ⭐ 헬퍼 메서드 호출 ⭐
+        Sort sort = createSort(searchRequest.getSortBy(), searchRequest.getSortDirection());
 
         List<Products> products;
         if (searchRequest.getKeyword() != null && !searchRequest.getKeyword().isEmpty()) {
-            // ⭐⭐⭐ findByProductNameContainingIgnoreCase 메서드에 Sort 객체 전달 ⭐⭐⭐
             products = productRepository.findByProductNameContainingIgnoreCase(searchRequest.getKeyword(), sort);
         } else {
             products = productRepository.findAll(sort);
