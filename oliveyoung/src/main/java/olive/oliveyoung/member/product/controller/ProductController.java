@@ -1,19 +1,14 @@
-// olive/oliveyoung/member/product/controller/ProductController.java
 package olive.oliveyoung.member.product.controller;
 
-// Products 엔티티 임포트가 더 이상 필요하지 않을 수 있지만,
-// 다른 로직에서 사용될 수도 있으니 일단은 유지해도 무방합니다.
-// import olive.oliveyoung.member.product.entity.Products;
-
 import olive.oliveyoung.member.product.service.ProductService;
-import olive.oliveyoung.member.product.dto.ProductResponseDTO; // ProductResponseDTO 임포트
-import olive.oliveyoung.member.product.dto.ProductSearchRequestDTO; // ProductSearchRequestDTO 임포트
+import olive.oliveyoung.member.product.dto.ProductResponseDTO;
+import olive.oliveyoung.member.product.dto.ProductSearchRequestDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-// import java.util.stream.Collectors; // DTO 변환을 Service에서 하므로 더 이상 필요 없음
+import java.util.Arrays; // Arrays.asList 사용을 위해 import 추가
 
 @RestController
 @RequestMapping("/api/products")
@@ -27,13 +22,27 @@ public class ProductController {
     }
 
     // 1. 모든 상품 목록 조회 API (정렬 포함)
-    // GET http://localhost:8080/api/products?sortBy=price&sortDirection=asc
+    // GET http://localhost:8080/api/products?sortBy=sellingPrice&sortDirection=asc
+    // GET http://localhost:8080/api/products?sortBy=new&sortDirection=desc  <-- 신상품순 (createdAt 기준)
+    // GET http://localhost:8080/api/products?sortBy=sold&sortDirection=desc <-- 판매순 (salesCount 기준)
+    // GET http://localhost:8080/api/products?sortBy=popular&sortDirection=desc <-- 인기순 (salesCount 또는 viewCount 기준, 현재는 salesCount)
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts( // 반환 타입을 List<ProductResponseDTO>로 변경
-                                                                    @RequestParam(required = false) String sortBy,
-                                                                    @RequestParam(required = false) String sortDirection
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortDirection
     ) {
-        // ProductService에서 이미 DTO로 변환된 리스트를 받습니다.
+        // 정렬 및 방향 파라미터 유효성 검사 (잠재적 문제 방지)
+        // sortBy가 제공된 경우에만 유효성 검사
+        if (sortBy != null && !isValidSortColumn(sortBy)) {
+            // 유효하지 않은 sortBy 값에 대해 BAD_REQUEST 반환
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // sortDirection이 제공된 경우에만 유효성 검사
+        if (sortDirection != null && !isValidSortDirection(sortDirection)) {
+            // 유효하지 않은 sortDirection 값에 대해 BAD_REQUEST 반환
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         List<ProductResponseDTO> productDTOs = productService.getAllProducts(sortBy, sortDirection);
         return new ResponseEntity<>(productDTOs, HttpStatus.OK);
     }
@@ -42,20 +51,62 @@ public class ProductController {
     // GET http://localhost:8080/api/products/{productId}
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long productId) {
-        // ProductService에서 이미 DTO로 변환된 Optional을 받습니다.
         return productService.getProductById(productId)
-                .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK)) // DTO를 바로 사용
+                .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // 3. 상품 검색 및 필터링 API (검색 조건 및 정렬 포함)
-    // GET http://localhost:8080/api/products/search?keyword=폰&brandId=1&sortBy=price&sortDirection=desc
+    // GET http://localhost:8080/api/products/search?keyword=폰&sortBy=sold&sortDirection=desc
     @GetMapping("/search")
     public ResponseEntity<List<ProductResponseDTO>> searchProducts(@ModelAttribute ProductSearchRequestDTO searchRequest) {
-        // ProductService에서 이미 DTO로 변환된 리스트를 받습니다.
+        // 검색 요청에서도 정렬 및 방향 파라미터 유효성 검사
+        if (searchRequest.getSortBy() != null && !isValidSortColumn(searchRequest.getSortBy())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (searchRequest.getSortDirection() != null && !isValidSortDirection(searchRequest.getSortDirection())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         List<ProductResponseDTO> productDTOs = productService.searchProducts(searchRequest);
         return new ResponseEntity<>(productDTOs, HttpStatus.OK);
     }
 
-    // TODO: 사용자 측에서 필요한 다른 API 엔드포인트 추가 (예: 상품 리뷰 조회, 장바구니 추가 등)
+    // 정렬 컬럼 유효성 검사를 위한 헬퍼 메서드 (보안상 중요!)
+    private boolean isValidSortColumn(String sortBy) {
+        if (sortBy == null || sortBy.isEmpty()) {
+            return true; // 정렬 기준이 없으면 유효하다고 판단
+        }
+        // ⭐⭐⭐ 이 부분을 아래와 같이 수정합니다. ⭐⭐⭐
+        // 이 목록에 ProductService의 switch 문에서 처리하는 'sortBy' 키워드와
+        // Products 엔티티의 실제 필드명 (카멜케이스 소문자)을 모두 포함해야 합니다.
+        return Arrays.asList(
+                "popular",      // '인기순' 키워드
+                "new",          // '신상품순' 키워드
+                "sold",         // '판매순' 키워드
+                "lowprice",     // '낮은 가격순' 키워드
+                "discount",     // '할인율 순' 키워드
+                // Products 엔티티의 실제 필드명 (소문자로 변환한 형태)
+                "productid",    // `productId` 필드
+                "name",
+                "createdat",    // `createdAt` 필드
+                "salescount",   // `salesCount` 필드
+                "sellingprice", // `sellingPrice` 필드
+                "originalprice",// `originalPrice` 필드
+                "stock",
+                "viewcount",     // `viewCount` 필드 (만약 Products 엔티티에 있다면)
+                "discount",
+                "discountedprice",
+                "discountrate"
+                // 필요하다면, DB 컬럼명 (예: "product_id", "created_at")도 여기에 추가하여 유연하게 처리할 수 있습니다.
+        ).contains(sortBy.toLowerCase());
+    }
+
+    // 정렬 방향 유효성 검사를 위한 헬퍼 메서드
+    private boolean isValidSortDirection(String sortDirection) {
+        if (sortDirection == null || sortDirection.isEmpty()) {
+            return true; // 정렬 방향이 없으면 유효하다고 판단
+        }
+        return sortDirection.equalsIgnoreCase("asc") || sortDirection.equalsIgnoreCase("desc");
+    }
 }

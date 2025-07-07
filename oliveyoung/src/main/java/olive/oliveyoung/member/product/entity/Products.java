@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.Builder; // @Builder 어노테이션 사용을 위해 추가
+import lombok.Builder;
 
-import java.util.ArrayList; // List 초기화를 위해 추가
-import java.util.List; // List 사용을 위해 추가
+import java.time.LocalDateTime; // LocalDateTime 임포트
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -16,7 +17,7 @@ import java.util.List; // List 사용을 위해 추가
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // DTO 변환 시 객체 생성을 편리하게 하기 위해 추가합니다.
+@Builder
 public class Products {
 
     @Id
@@ -45,21 +46,56 @@ public class Products {
     @Column(name = "image_url")
     private String imageUrl;
 
-    // 🚨 기존의 String badgeInfo 필드는 이제 삭제합니다. 🚨
-    // @Column(name = "badge_info")
-    // private String badgeInfo;
+    // ⭐️ 새로 추가할 필드: 상품 등록일시 (신상품 순 정렬 기준)
+    @Column(name = "created_at", nullable = false, updatable = false) // 생성 시간은 변경되지 않음
+    private LocalDateTime createdAt;
 
-    // ✨ 새로 추가되는 다대다(Many-to-Many) 관계 매핑 필드 ✨
-    @ManyToMany(fetch = FetchType.LAZY) // Products와 Badge는 다대다 관계이며, 지연 로딩을 사용합니다.
+    // ⭐️ 새로 추가할 필드: 상품 판매량 (판매 순 정렬 기준)
+    @Column(name = "sales_count", nullable = false)
+    private Integer salesCount;
+
+    @Column(name = "discount_rate") // 할인율
+    private Integer discountRate;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "product_badges", // 다대다 관계를 매핑할 조인(중간) 테이블의 이름
-            joinColumns = @JoinColumn(name = "product_id"), // 현재 엔티티(Products)의 기본 키(productId)가 조인 테이블의 어떤 컬럼(product_id)에 매핑되는지 지정
-            inverseJoinColumns = @JoinColumn(name = "badge_id") // 반대쪽 엔티티(Badge)의 기본 키(id)가 조인 테이블의 어떤 컬럼(badge_id)에 매핑되는지 지정
+            name = "product_badges",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
     )
-    private List<Badges> badges = new ArrayList<>(); // 이 상품이 가진 뱃지 목록을 저장할 필드입니다. 초기화 필수!
+    private List<Badges> badges = new ArrayList<>();
 
-    // Brands 엔티티와의 ManyToOne 관계는 그대로 유지합니다.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)
-    private Brands brand; // Brands 엔티티 참조
+    private Brands brand;
+
+    // Entity가 처음 저장될 때(Persist) 자동으로 호출되어 필드를 초기화합니다.
+    @PrePersist // 엔티티가 저장되기 전에 실행
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (salesCount == null) {
+            salesCount = 0; // 초기 판매량 0
+        }
+        // ⭐⭐⭐ 할인율 계산 로직 수정: Integer 타입에 맞게 반올림 및 캐스팅 ⭐⭐⭐
+        if (originalPrice != null && originalPrice > 0) {
+            double calculatedRate = ((double)(originalPrice - discountedPrice) / originalPrice) * 100.0;
+            this.discountRate = (int) Math.round(calculatedRate); // Double -> Integer로 반올림하여 캐스팅
+        } else {
+            this.discountRate = 0; // Integer 타입에 맞게 0으로 초기화
+        }
+    }
+
+    @PreUpdate // 엔티티가 업데이트되기 전에 실행
+    protected void onUpdate() {
+        // ⭐⭐⭐ 업데이트 시에도 할인율 재계산: Integer 타입에 맞게 반올림 및 캐스팅 ⭐⭐⭐
+        if (originalPrice != null && originalPrice > 0) {
+            double calculatedRate = ((double)(originalPrice - discountedPrice) / originalPrice) * 100.0;
+            this.discountRate = (int) Math.round(calculatedRate); // Double -> Integer로 반올림하여 캐스팅
+        } else {
+            this.discountRate = 0; // Integer 타입에 맞게 0으로 초기화
+        }
+    }
+
 }
