@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.config.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,8 +32,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/user/**").permitAll()
-                        .requestMatchers("/mypage/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/*/reviews").authenticated()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/**").authenticated()
+                        .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/mypage/**").hasRole("USER")
+                        .requestMatchers( "/api/products", "/api/brands").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  //  .permitAll()//// 관리자 API는 ADMIN 권한 필요
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()
                 )

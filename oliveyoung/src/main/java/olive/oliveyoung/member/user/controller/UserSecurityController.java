@@ -20,7 +20,7 @@ public class UserSecurityController {
     /**
      * 비밀번호 변경
      */
-    @PatchMapping("/mypage/user/modifyactinfo/modifypwd")
+    @PatchMapping("/api/mypage/modifypwd")
     public ResponseEntity<ApiResponse<Void>> updatePassword(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody PasswordUpdateRequest request) {

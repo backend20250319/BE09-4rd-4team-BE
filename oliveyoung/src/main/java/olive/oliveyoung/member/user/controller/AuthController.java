@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 /* 로그인, 토큰 생성/검증, 로그아웃 처리 */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

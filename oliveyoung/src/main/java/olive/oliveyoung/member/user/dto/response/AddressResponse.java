@@ -10,9 +10,7 @@ public class AddressResponse {
     private String addressName;
     private String recipientName;
     private String phone;
-    private String zipcode;
     private String streetAddress;
-    private String streetNumber;
     private String detailAddress;
     private boolean isDefault;
 
@@ -21,7 +19,6 @@ public class AddressResponse {
                 .addressName(address.getAddressName())
                 .recipientName(address.getRecipientName())
                 .phone(address.getPhone())
-                .zipcode(address.getZipcode())
                 .streetAddress(address.getStreetAddress())
                 .detailAddress(address.getDetailAddress())
                 .isDefault(address.isDefault())

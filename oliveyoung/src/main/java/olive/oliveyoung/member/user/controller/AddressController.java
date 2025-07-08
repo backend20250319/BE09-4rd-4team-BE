@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/address")
+@RequestMapping("/api/mypage/address")
 @RequiredArgsConstructor
 public class AddressController {
 
     private final AddressService addressService;
 
     // 배송지 추가
-    @PostMapping
+    @PostMapping("/register")
     public ApiResponse<Void> addAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody AddressRequest addressRequest) {
         String userId = customUserDetails.getUsername();
         addressService.addAddress(userId, addressRequest);
