@@ -21,7 +21,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // ⭐⭐⭐ 새로운 상품 상세 조회 API 추가 (문자열 식별자 사용) ⭐⭐⭐
     // GET http://localhost:8080/api/products/skintoner/{productIdentifier}
     @GetMapping("/skintoner/{productIdentifier}")
     public ResponseEntity<ProductResponseDTO> getSkinTonerProductByIdentifier(@PathVariable String productIdentifier) {
@@ -49,8 +48,8 @@ public class ProductController {
     }
 
     // 2. 특정 상품 상세 조회 API (기존 Long ID 사용)
-    // 이 엔드포인트는 유지하거나, 필요 없다면 제거할 수 있습니다.
-    // 현재 프론트엔드는 /skintoner/{productIdentifier}를 사용하므로, 이 엔드포인트를 직접 호출하지 않을 것입니다.
+    // 이 엔드포인트는 유지하거나, 필요 없다면 제거할 수 있다.
+    // 현재 프론트엔드는 /skintoner/{productIdentifier}를 사용하므로, 이 엔드포인트를 직접 호출하지 않을 것이다.
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long productId) {
         return productService.getProductById(productId)

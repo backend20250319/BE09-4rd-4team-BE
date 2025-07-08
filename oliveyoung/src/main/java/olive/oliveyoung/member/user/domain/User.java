@@ -4,17 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 import olive.oliveyoung.member.user.common.entity.BaseEntity;
 
+import olive.oliveyoung.member.review.entity.Review;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "users")
-@ToString(callSuper = true)
+@ToString(exclude = {"addresses", "reviews"})
 public class User extends BaseEntity {
 
     @Id
@@ -41,6 +42,10 @@ public class User extends BaseEntity {
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
+
     @Enumerated(EnumType.STRING) // Enum 타입을 문자열 자체로 저장 (e.g., "USER", "ADMIN")
     @Column(nullable = false)
     private Role role;
@@ -55,8 +60,4 @@ public class User extends BaseEntity {
         addresses.add(address);
         address.setUser(this);
     }
-
-    // 사용자 정보 업데이트 메서드 (기존 메서드는 삭제 또는 변경)
-    // PATCH 요청에 맞춰 개별 필드 업데이트를 위한 setter 추가
-
 }
