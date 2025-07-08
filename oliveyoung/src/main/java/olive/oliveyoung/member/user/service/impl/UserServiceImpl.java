@@ -6,6 +6,7 @@ import olive.oliveyoung.member.user.domain.Role;
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.PasswordUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
+import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.repository.RefreshTokenRepository;
 import olive.oliveyoung.member.user.repository.UserRepository;
@@ -92,6 +93,25 @@ public class UserServiceImpl implements UserService {
         // 새 비밀번호 암호화 및 업데이트
         String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
         user.updatePassword(encodedNewPassword); // User 엔티티에 비밀번호 업데이트 메서드 추가 필요
+
+        userRepository.save(user);
+    }
+
+    /**
+     * 회원 정보 수정
+     */
+    @Transactional
+    @Override
+    public void updateUser(String userId, UserUpdateRequest userUpdateRequest) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
+
+        // 기본 정보 업데이트
+        user.updateUserInfo(
+                userUpdateRequest.getUserName(),
+                userUpdateRequest.getEmail(),
+                userUpdateRequest.getPhone()
+        );
 
         userRepository.save(user);
     }

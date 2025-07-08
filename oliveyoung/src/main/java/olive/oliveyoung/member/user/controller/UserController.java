@@ -5,6 +5,7 @@ import olive.oliveyoung.member.user.common.CustomUserDetails; // CustomUserDetai
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.DuplicateCheckRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
+import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.service.UserService;
@@ -96,6 +97,26 @@ public class UserController {
 
         );
         return ResponseEntity.ok(ApiResponse.success(userInfoResponse, HttpStatus.OK.value()));
+    }
+
+    /**
+     * 회원 정보 수정
+     */
+    @PutMapping("/mypage/info")
+    public ResponseEntity<ApiResponse<Void>> updateUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody UserUpdateRequest userUpdateRequest) {
+
+        userService.updateUser(customUserDetails.getUser().getUserId(), userUpdateRequest);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("회원 정보가 성공적으로 수정되었습니다.")
+                        .status(HttpStatus.OK.value())
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 }
 

@@ -36,6 +36,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String phone;
 
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
@@ -53,5 +54,12 @@ public class User extends BaseEntity {
     public void addAddress(Address address) {
         addresses.add(address);
         address.setUser(this);
+    }
+
+    // 사용자 정보 업데이트 메서드
+    public void updateUserInfo(String userName, String email, String phone) {
+        this.userName = userName;
+        this.email = email;
+        this.phone = phone;
     }
 }
