@@ -4,8 +4,11 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import olive.oliveyoung.member.user.Role;
+import olive.oliveyoung.member.user.domain.Role;
+import olive.oliveyoung.member.user.domain.User; // User import 추가
+import olive.oliveyoung.member.user.repository.UserRepository; // UserRepository import 추가
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
@@ -17,20 +20,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final JwtConfig jwtConfig; // ✅ 설정 클래스 주입
+    private final JwtConfig jwtConfig;
+    private final UserRepository userRepository; // UserRepository 주입
 
     private SecretKey secretKey;
 
     @PostConstruct
     public void init() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getJwtSecret());
+        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret());
         secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 1. Access Token 생성
     public String generateAccessToken(Map<String, Object> claims) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtConfig.getJwtExpiration());
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getExpiration());
 
         return Jwts.builder()
                 .claims(claims)
@@ -43,7 +47,9 @@ public class JwtTokenProvider {
     // 2. Refresh Token 생성
     public String generateRefreshToken(String userId, String role) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtConfig.getJwtRefreshExpiration());
+        long refreshExpirationMillis = jwtConfig.getRefreshExpiration();
+//        System.out.println("Refresh Token Expiration (ms): " + refreshExpirationMillis);
+        Date expiryDate = new Date(now.getTime() + refreshExpirationMillis);
 
         return Jwts.builder()
                 .subject(userId)
@@ -105,7 +111,23 @@ public class JwtTokenProvider {
         }
     }
 
-    public long getRefreshExpiration() {
-        return jwtConfig.getJwtRefreshExpiration();
+    // 토큰에서 User 객체 가져오기 (새로 추가)
+    public User getUserFromJWT(String token) {
+        String userId = getUserIdFromJWT(token);
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadCredentialsException("User not found in token"));
+    }
+
+    public Long getRefreshExpiration() {
+        return jwtConfig.getRefreshExpiration();
+    }
+
+    // HttpServletRequest에서 토큰 추출
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(jwtConfig.getHeader());
+        if (bearerToken != null && bearerToken.startsWith(jwtConfig.getPrefix() + " ")) {
+            return bearerToken.substring(jwtConfig.getPrefix().length() + 1);
+        }
+        return null;
     }
 }
