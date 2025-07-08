@@ -12,9 +12,11 @@ public interface UserService {
 
     void withdraw(String username, UserWithdrawRequest request);
 
-    boolean existsByUserNameAndPhone(String userName, String phone);
-
     void updatePassword(String userId, PasswordUpdateRequest request);
 
     void updateUser(String userId, UserUpdateRequest userUpdateRequest);
+
+    boolean existsByUserName(String userName);
+
+    boolean existsByPhone(String phone);
 }

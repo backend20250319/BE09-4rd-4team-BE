@@ -23,20 +23,21 @@ import java.util.Map;
 /* 회원가입, 회원 정보 수정, 회원 탈퇴 */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
 
     /**
-     * 회원가입 전 회원 중복 체크
+     * 회원가입 전 회원 중복 체크 - 전화번호로 체크
      */
     @PostMapping("/user/checkduplicate")
     public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkDuplicate(@RequestBody DuplicateCheckRequest request) {
-        boolean isDuplicate = userService.existsByUserNameAndPhone(request.getUserName(), request.getPhone());
+        boolean isDuplicate = userService.existsByPhone(request.getPhone());
 
         Map<String, Boolean> result = new HashMap<>();
-        result.put("isDuplicate", isDuplicate);
+        result.put("이미 사용 중인 전화번호입니다.", isDuplicate);
 
         return ResponseEntity.ok(
                 ApiResponse.success(result, HttpStatus.OK.value())
@@ -94,7 +95,6 @@ public class UserController {
                 user.getUserName(),
                 user.getEmail(),
                 user.getPhone()
-
         );
         return ResponseEntity.ok(ApiResponse.success(userInfoResponse, HttpStatus.OK.value()));
     }
@@ -102,7 +102,7 @@ public class UserController {
     /**
      * 회원 정보 수정
      */
-    @PutMapping("/mypage/info")
+    @PatchMapping("/mypage/modifyinfo")
     public ResponseEntity<ApiResponse<Void>> updateUserInfo(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody UserUpdateRequest userUpdateRequest) {
