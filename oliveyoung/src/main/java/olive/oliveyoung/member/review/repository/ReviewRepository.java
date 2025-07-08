@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByProductId(Long productId);
-    List<Review> findByUserId(Long userId);
-    int countByUserId(Long userId);
-    Optional<Review> findByUserIdAndUserReviewNumber(Long userId, Integer userReviewNumber); // 추가
+    List<Review> findByProduct_ProductId(Long productId);
+    List<Review> findByUser_UserNo(Long userNo);
+    long countByUser_UserNo(Long userNo);
+    Optional<Review> findByReviewIdAndUser_UserNo(Long reviewId, Long userNo);
 }

@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewResponseDto {
     private Long reviewId;
-    private Long userId;
+    private String userName; // userId -> userName
     private Long productId;
     private Double rating;
-    private Integer userReviewNumber;
     private String content;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

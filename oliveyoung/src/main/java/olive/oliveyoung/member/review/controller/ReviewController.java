@@ -5,50 +5,97 @@ import olive.oliveyoung.member.review.dto.ReviewRequestDto;
 import olive.oliveyoung.member.review.dto.ReviewResponseDto;
 import olive.oliveyoung.member.review.dto.ReviewUpdateDto;
 import olive.oliveyoung.member.review.service.ReviewService;
-import org.springframework.http.*;
+import olive.oliveyoung.member.user.common.CustomUserDetails;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping // 리뷰 작성
-    public ResponseEntity<ReviewResponseDto> create(@RequestBody ReviewRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(dto));
+    // 📌 1. 리뷰 등록 API
+    @PostMapping("/products/{productId}/reviews")
+    public ResponseEntity<?> createReview(@PathVariable Long productId,
+                                          @RequestBody ReviewRequestDto dto,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long reviewId = reviewService.createReview(productId, dto, userDetails.getUsername()); // 또는 getUserId()
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                Map.of("success", true, "data", Map.of("reviewId", reviewId))
+        );
     }
 
-    @GetMapping("/product/{productId}") // 상품 별 리뷰
-    public ResponseEntity<List<ReviewResponseDto>> getByProduct(@PathVariable Long productId) {
-        return ResponseEntity.ok(reviewService.getReviewsByProduct(productId));
+    // 📌 2. 리뷰 수정 API
+    @PutMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> updateReview(@PathVariable Long reviewId,
+                                          @RequestBody ReviewUpdateDto dto,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        reviewService.updateReview(reviewId, dto, userDetails.getUsername());
+        return ResponseEntity.ok(new ApiResponse<>(true, "리뷰가 수정되었습니다."));
     }
 
-    @GetMapping("/user/{userId}") // 사용자 별 리뷰
-    public ResponseEntity<List<ReviewResponseDto>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(reviewService.getReviewsByUser(userId));
+    // 📌 3. 리뷰 삭제 API
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        reviewService.deleteReview(reviewId, userDetails.getUsername());
+        return ResponseEntity.ok(new ApiResponse<>(true, "리뷰가 삭제되었습니다."));
     }
 
-    @PutMapping("/user/{userId}/review/{userReviewNumber}")
-    public ResponseEntity<String> updateByUserReviewNumber(
-            @PathVariable Long userId,
-            @PathVariable Integer userReviewNumber,
-            @RequestBody ReviewUpdateDto dto
-    ) {
-        String message = reviewService.updateReviewByUserAndNumber(userId, userReviewNumber, dto);
-        return ResponseEntity.ok(message); // 메시지 반환
+    // 📌 4. 상품별 리뷰 목록 조회
+    @GetMapping("/products/{productId}/reviews")
+    public ResponseEntity<?> getReviewsByProduct(@PathVariable Long productId) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByProduct(productId);
+        return ResponseEntity.ok(new ApiResponse<>(true, reviews));
     }
 
-    @DeleteMapping("/user/{userId}/review/{userReviewNumber}")
-    public ResponseEntity<String> deleteByUserReviewNumber(
-            @PathVariable Long userId,
-            @PathVariable Integer userReviewNumber
-    ) {
-        String message = reviewService.deleteReviewByUserAndNumber(userId, userReviewNumber);
-        return ResponseEntity.ok(message); // 메시지 반환
+    // 📌 5. 유저별 리뷰 목록 조회
+    @GetMapping("/users/{userId}/reviews")
+    public ResponseEntity<?> getReviewsByUser(@PathVariable String userId) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByUser(userId);
+        return ResponseEntity.ok(new ApiResponse<>(true, reviews));
     }
 
+    // 📌 6. 평균 평점 조회
+    @GetMapping("/products/{productId}/reviews/average-rating")
+    public ResponseEntity<?> getAverageRating(@PathVariable Long productId) {
+        double averageRating = reviewService.getAverageRating(productId);
+        return ResponseEntity.ok(new ApiResponse<>(true, new AverageRatingResponse(averageRating)));
+    }
+
+    // 응답용 내부 DTO
+    static class IdResponse {
+        private final Long reviewId;
+        public IdResponse(Long reviewId) {
+            this.reviewId = reviewId;
+        }
+        public Long getReviewId() { return reviewId; }
+    }
+
+    static class AverageRatingResponse {
+        private final double averageRating;
+        public AverageRatingResponse(double averageRating) {
+            this.averageRating = averageRating;
+        }
+        public double getAverageRating() { return averageRating; }
+    }
+
+    static class ApiResponse<T> {
+        private final boolean success;
+        private final T data;
+        public ApiResponse(boolean success, T data) {
+            this.success = success;
+            this.data = data;
+        }
+        public boolean isSuccess() { return success; }
+        public T getData() { return data; }
+    }
 }
+

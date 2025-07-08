@@ -2,28 +2,38 @@ package olive.oliveyoung.member.review.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import olive.oliveyoung.member.product.entity.Products;
+import olive.oliveyoung.member.user.domain.User;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-// 지금은 현재 바로 테스트 하기 위해서 따로 엔티티 구성해서 userid productid를 만들어 줬고
-// 나중에 병합할 때 제외한 다음에 실제 데이터를 연결
+
 @Entity
-@Table(name = "review")
+@Table(name = "reviews")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"user", "product"})
+@EntityListeners(AuditingEntityListener.class)
+
 public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long reviewId;
 
-    @Column(nullable = false)
-    private Long userId; // 사용자 ID만 저장 (외래키 아님)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // FK 매핑 정확히 테이블 기준
+    private User user;
 
-    @Column(nullable = false)
-    private Long productId; // 상품 ID만 저장
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Products product;
 
     @Column(nullable = false)
     private Double rating;
@@ -31,22 +41,21 @@ public class Review {
     @Lob
     private String content;
 
-    @Column(nullable = false)
-    private Integer userReviewNumber; // 유저별 리뷰 번호 (1부터 증가)
-
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    // 테이블에 이미 존재하는 `date` 컬럼을 매핑
+    @Column(name = "date", nullable = false)
+    private LocalDateTime date;
 
     @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    protected void onCreate() {
+        this.date = LocalDateTime.now();
     }
 
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
 }
