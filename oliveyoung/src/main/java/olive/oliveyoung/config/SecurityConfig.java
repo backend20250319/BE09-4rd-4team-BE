@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/*/reviews").authenticated()
                         .requestMatchers("/auth/**", "/user/**").permitAll()
