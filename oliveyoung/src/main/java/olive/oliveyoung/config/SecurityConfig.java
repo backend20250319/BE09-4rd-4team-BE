@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/*/reviews").authenticated()
                         .requestMatchers("/auth/**", "/user/**").permitAll()
+                        .requestMatchers("/auth/**", "/user/**", "/api/products", "/api/brands").permitAll()
                         .requestMatchers("/mypage/**").authenticated()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()
