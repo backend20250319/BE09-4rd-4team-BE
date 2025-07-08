@@ -5,6 +5,7 @@ import olive.oliveyoung.member.user.common.CustomUserDetails; // CustomUserDetai
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.DuplicateCheckRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
+import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.service.UserService;
@@ -22,20 +23,21 @@ import java.util.Map;
 /* 회원가입, 회원 정보 수정, 회원 탈퇴 */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
 
     /**
-     * 회원가입 전 회원 중복 체크
+     * 회원가입 전 회원 중복 체크 - 전화번호로 체크
      */
     @PostMapping("/user/checkduplicate")
     public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkDuplicate(@RequestBody DuplicateCheckRequest request) {
-        boolean isDuplicate = userService.existsByUserNameAndPhone(request.getUserName(), request.getPhone());
+        boolean isDuplicate = userService.existsByPhone(request.getPhone());
 
         Map<String, Boolean> result = new HashMap<>();
-        result.put("isDuplicate", isDuplicate);
+        result.put("이미 사용 중인 전화번호입니다.", isDuplicate);
 
         return ResponseEntity.ok(
                 ApiResponse.success(result, HttpStatus.OK.value())
@@ -93,9 +95,28 @@ public class UserController {
                 user.getUserName(),
                 user.getEmail(),
                 user.getPhone()
-
         );
         return ResponseEntity.ok(ApiResponse.success(userInfoResponse, HttpStatus.OK.value()));
+    }
+
+    /**
+     * 회원 정보 수정
+     */
+    @PatchMapping("/mypage/modifyinfo")
+    public ResponseEntity<ApiResponse<Void>> updateUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody UserUpdateRequest userUpdateRequest) {
+
+        userService.updateUser(customUserDetails.getUser().getUserId(), userUpdateRequest);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("회원 정보가 성공적으로 수정되었습니다.")
+                        .status(HttpStatus.OK.value())
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 }
 

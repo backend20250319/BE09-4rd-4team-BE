@@ -1,11 +1,14 @@
 package olive.oliveyoung.member.user.service.impl;
 
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.domain.Role;
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.PasswordUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
+import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.repository.RefreshTokenRepository;
 import olive.oliveyoung.member.user.repository.UserRepository;
@@ -22,13 +25,23 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+
     /**
-     * 회원가입 전 회원 중복 체크
+     * 회원가입 전 회원 중복 체크 - 회원 이름
      */
     @Override
-    public boolean existsByUserNameAndPhone(String userName, String phone) {
-        return userRepository.existsByUserNameAndPhone(userName, phone);
+    public boolean existsByUserName(String userName) {
+        return userRepository.existsByUserName(userName);
     }
+
+    /**
+     * 회원가입 전 회원 중복 체크 - 회원 전화번호
+     */
+    @Override
+    public boolean existsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
 
     /**
      * 회원가입
@@ -36,13 +49,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signUp(UserSignUpRequest request) {
-        // 1. 아이디 중복 체크
+        // 아이디 중복 체크
         if (userRepository.existsByUserId(request.getUserId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
-        // 2. 비밀번호 암호화
+
+        // 이메일 중복 체크
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
+        // 전화번호 중복 체크
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
+        }
+
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        // 3. User 엔티티 생성
+
+        // User 엔티티 생성
         User user = User.builder()
                 .userId(request.getUserId())
                 .password(encodedPassword)
@@ -51,8 +76,10 @@ public class UserServiceImpl implements UserService {
                 .phone(request.getPhone())
                 .role(Role.USER) // 기본 권한 설정 (Role enum이 있다고 가정)
                 .build();
-        // 4. DB에 저장
+
+        // DB에 저장
         userRepository.save(user);
+
     }
 
     /**
@@ -95,5 +122,30 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
+    /**
+     * 회원 정보 수정
+     */
+    @Transactional
+    @Override
+    public void updateUser(String userId, UserUpdateRequest userUpdateRequest) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
+
+        // PATCH 요청에 맞춰 null이 아닌 필드만 업데이트
+        if (userUpdateRequest.getUserName() != null) {
+            user.setUserName(userUpdateRequest.getUserName());
+        }
+        if (userUpdateRequest.getEmail() != null) {
+            user.setEmail(userUpdateRequest.getEmail());
+        }
+        if (userUpdateRequest.getPhone() != null) {
+            user.setPhone(userUpdateRequest.getPhone());
+        }
+
+        userRepository.save(user);
+    }
+
+
 }
 
