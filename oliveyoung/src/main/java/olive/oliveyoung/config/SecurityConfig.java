@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.config.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,6 +32,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/*/reviews").authenticated()
+                        .requestMatchers("/auth/**", "/user/**").permitAll()
                         .requestMatchers("/auth/**", "/user/**", "/api/products", "/api/brands").permitAll()
                         .requestMatchers("/mypage/**").authenticated()
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
