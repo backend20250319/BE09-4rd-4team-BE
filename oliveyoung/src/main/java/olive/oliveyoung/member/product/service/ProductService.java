@@ -20,7 +20,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    // ⭐⭐⭐ 새로운 상품 상세 조회 메서드 추가 (문자열 식별자 사용) ⭐⭐⭐
+    // 새로운 상품 상세 조회 메서드 추가 (문자열 식별자 사용)
     public Optional<ProductResponseDTO> getSkinTonerProductByIdentifier(String productIdentifier) {
         Long actualProductId = convertIdentifierToId(productIdentifier);
 
@@ -40,7 +40,7 @@ public class ProductService {
         return null;
     }
 
-    // ⭐⭐⭐ 중복 제거를 위해 정렬 로직을 분리한 헬퍼 메서드 ⭐⭐⭐
+    // 중복 제거를 위해 정렬 로직을 분리한 헬퍼 메서드
     private Sort createSort(String sortBy, String sortDirection) {
         Sort.Direction direction = Sort.Direction.ASC;
         if (sortDirection != null && sortDirection.equalsIgnoreCase("desc")) {
@@ -82,7 +82,7 @@ public class ProductService {
     }
 
     public List<ProductResponseDTO> getAllProducts(String sortBy, String sortDirection) {
-        Sort sort = createSort(sortBy, sortDirection); // ⭐ 헬퍼 메서드 호출 ⭐
+        Sort sort = createSort(sortBy, sortDirection); // 헬퍼 메서드 호출
         List<Products> products = productRepository.findAll(sort);
         return products.stream()
                 .map(ProductResponseDTO::new)
@@ -95,7 +95,7 @@ public class ProductService {
     }
 
     public List<ProductResponseDTO> searchProducts(ProductSearchRequestDTO searchRequest) {
-        // ⭐ 헬퍼 메서드 호출 ⭐
+        // 헬퍼 메서드 호출
         Sort sort = createSort(searchRequest.getSortBy(), searchRequest.getSortDirection());
 
         List<Products> products;
