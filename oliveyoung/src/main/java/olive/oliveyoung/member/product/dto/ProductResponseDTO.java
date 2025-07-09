@@ -4,6 +4,7 @@ import olive.oliveyoung.member.product.entity.Products;
 import olive.oliveyoung.member.product.entity.Badges; // Badges 임포트 확인
 import lombok.Data;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime; // LocalDateTime 임포트
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class ProductResponseDTO {
     private String description;
     private LocalDateTime createdAt;
     private Integer salesCount;
-
+    private String state;
     private String discountRate;
 
 
@@ -37,6 +38,7 @@ public class ProductResponseDTO {
         this.description = product.getDescription();
         this.createdAt = product.getCreatedAt();
         this.salesCount = product.getSalesCount();
+        this.state = product.getState();
 
         if (product.getDiscountRate() != null) {
             this.discountRate = product.getDiscountRate() + "%";

@@ -39,10 +39,14 @@ public class ReviewServiceImpl implements ReviewService {
                 .product(product)
                 .rating(dto.getRating())
                 .content(dto.getContent())
+                .skinType(dto.getSkinType())
+                .skinConcern(dto.getSkinConcern())
+                .texture(dto.getTexture())
                 .build();
 
         return reviewRepository.save(review).getReviewId();
     }
+
 
 
     @Override

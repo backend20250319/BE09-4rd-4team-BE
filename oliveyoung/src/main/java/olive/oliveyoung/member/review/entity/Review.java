@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name = "reviews")
 @Getter
@@ -19,7 +20,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString(exclude = {"user", "product"})
 @EntityListeners(AuditingEntityListener.class)
-
 public class Review {
 
     @Id
@@ -28,7 +28,7 @@ public class Review {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // FK 매핑 정확히 테이블 기준
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,7 +41,15 @@ public class Review {
     @Lob
     private String content;
 
-    // 테이블에 이미 존재하는 `date` 컬럼을 매핑
+    @Column(name = "skin_type")
+    private String skinType;
+
+    @Column(name = "skin_concern")
+    private String skinConcern;
+
+    @Column(name = "texture")
+    private String texture;
+
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
@@ -57,5 +65,5 @@ public class Review {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 }
+
