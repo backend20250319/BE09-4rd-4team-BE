@@ -55,6 +55,9 @@ public class Products {
     @Column(name = "discount_rate")
     private Integer discountRate;
 
+    @Column(name = "state")
+    private String state;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_badges",
