@@ -42,6 +42,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByPhone(phone);
     }
 
+    /**
+     * 회원가입 중 아이디 중복 체크
+     */
+    @Override
+    public boolean isUserIdDuplicate(String userId) {
+        return userRepository.existsByUserId(userId);
+    }
 
     /**
      * 회원가입

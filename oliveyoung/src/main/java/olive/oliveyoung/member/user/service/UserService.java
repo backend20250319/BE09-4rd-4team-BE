@@ -18,5 +18,7 @@ public interface UserService {
 
     boolean existsByUserName(String userName);
 
+    boolean isUserIdDuplicate(String userId);
+
     boolean existsByPhone(String phone);
 }
