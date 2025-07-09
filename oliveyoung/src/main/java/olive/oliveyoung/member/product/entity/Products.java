@@ -1,11 +1,9 @@
 package olive.oliveyoung.member.product.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
+
+import olive.oliveyoung.member.review.entity.Review;
 
 import java.time.LocalDateTime; // LocalDateTime 임포트
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"badges", "brand", "reviews"})
 public class Products {
 
     @Id
@@ -55,6 +54,9 @@ public class Products {
     @Column(name = "discount_rate")
     private Integer discountRate;
 
+    @Column(name = "state")
+    private String state;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_badges",
@@ -66,6 +68,9 @@ public class Products {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)
     private Brands brand;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     // Entity가 처음 저장될 때(Persist) 자동으로 호출되어 필드를 초기화한다.
     @PrePersist // 엔티티가 저장되기 전에 실행

@@ -4,16 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import olive.oliveyoung.member.user.common.entity.BaseEntity;
 
+import olive.oliveyoung.member.review.entity.Review;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "users")
-@ToString(exclude = "addresses")
+@ToString(exclude = {"addresses", "reviews"})
 public class User extends BaseEntity {
 
     @Id
@@ -39,6 +42,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
 
     @Enumerated(EnumType.STRING) // Enum 타입을 문자열 자체로 저장 (e.g., "USER", "ADMIN")
     @Column(nullable = false)

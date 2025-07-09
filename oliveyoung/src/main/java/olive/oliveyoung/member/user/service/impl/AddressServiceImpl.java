@@ -27,13 +27,19 @@ public class AddressServiceImpl implements AddressService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        if (addressRequest.isDefault()) {
+            user.getAddresses().forEach(address -> {
+                if (address.isDefault()) {
+                    address.setDefault(false);
+                }
+            });
+        }
+
         Address address = Address.builder()
                 .addressName(addressRequest.getAddressName())
                 .recipientName(addressRequest.getRecipientName())
                 .phone(addressRequest.getPhone())
-                .zipcode(addressRequest.getZipcode())
                 .streetAddress(addressRequest.getStreetAddress())
-                .streetNumber(addressRequest.getStreetNumber())
                 .detailAddress(addressRequest.getDetailAddress())
                 .isDefault(addressRequest.isDefault())
                 .build();
@@ -66,13 +72,19 @@ public class AddressServiceImpl implements AddressService {
             throw new IllegalArgumentException("권한이 없는 사용자입니다.");
         }
 
+        if (addressRequest.isDefault()) {
+            user.getAddresses().forEach(oneAddress -> {
+                if (oneAddress.isDefault()) {
+                    oneAddress.setDefault(false);
+                }
+            });
+        }
+
         address.updateAddress(
                 addressRequest.getAddressName(),
                 addressRequest.getRecipientName(),
                 addressRequest.getPhone(),
-                addressRequest.getZipcode(),
                 addressRequest.getStreetAddress(),
-                addressRequest.getStreetNumber(),
                 addressRequest.getDetailAddress(),
                 addressRequest.isDefault()
         );
