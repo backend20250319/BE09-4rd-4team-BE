@@ -9,9 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserSignUpRequest {
-    private String userName;
+
     private String userId;
     private String password;
-    private String phone;
+    private String userName;
     private String email;
+    private String phone;
 }
