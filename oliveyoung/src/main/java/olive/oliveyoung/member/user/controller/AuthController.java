@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.common.ApiResponse;
 import olive.oliveyoung.member.user.dto.request.LoginRequest;
+import olive.oliveyoung.member.user.dto.response.LoginResponse;
 import olive.oliveyoung.member.user.dto.response.TokenResponse;
 import olive.oliveyoung.member.user.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,9 @@ public class AuthController {
      *  로그인
      */
      @PostMapping("/login")
-     public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody LoginRequest loginRequest) {
-         TokenResponse tokenResponse = authService.login(loginRequest);
-         return ResponseEntity.ok(ApiResponse.success(tokenResponse, HttpStatus.OK.value()));
+     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
+         LoginResponse loginResponse = authService.login(loginRequest);
+         return ResponseEntity.ok(ApiResponse.success(loginResponse, HttpStatus.OK.value()));
      }
 
     /**
