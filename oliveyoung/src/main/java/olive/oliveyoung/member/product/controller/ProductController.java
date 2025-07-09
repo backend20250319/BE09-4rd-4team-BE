@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Arrays;
+// import java.util.Collections; // 만약 빈 리스트를 반환할 때 Collections.emptyList()를 사용한다면 필요
 
 @RestController
 @RequestMapping("/api/products")
@@ -29,7 +30,6 @@ public class ProductController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-
     // 1. 모든 상품 목록 조회 API (정렬 포함)
     @GetMapping
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts(
@@ -48,8 +48,6 @@ public class ProductController {
     }
 
     // 2. 특정 상품 상세 조회 API (기존 Long ID 사용)
-    // 이 엔드포인트는 유지하거나, 필요 없다면 제거할 수 있다.
-    // 현재 프론트엔드는 /skintoner/{productIdentifier}를 사용하므로, 이 엔드포인트를 직접 호출하지 않을 것이다.
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long productId) {
         return productService.getProductById(productId)
@@ -71,6 +69,36 @@ public class ProductController {
         return new ResponseEntity<>(productDTOs, HttpStatus.OK);
     }
 
+    // 4. 상품 카테고리별 상품 조회 API
+    @GetMapping("/category")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByCategory(
+            @RequestParam(name = "categoryName") String categoryName) {
+        // categoryName으로 상품을 조회하는 서비스 메서드를 호출
+        List<ProductResponseDTO> products = productService.getProductsByCategory(categoryName);
+
+        // 결과가 비어있을 경우 204 No Content를 반환하거나, 빈 리스트를 OK(200)와 함께 반환할 수 있습니다.
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+            // 또는 return ResponseEntity.ok(Collections.emptyList()); // 200 OK with empty list (import java.util.Collections 필요)
+        }
+        return ResponseEntity.ok(products); // 상품 목록이 있을 경우 200 OK와 함께 반환
+    }
+
+    // 5. 상품 상태별 상품 조회 API
+    @GetMapping("/state")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByState(
+            @RequestParam(name = "productState") String productState) {
+        if (!isValidProductState(productState)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<ProductResponseDTO> products = productService.getProductsByState(productState);
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(products);
+    }
+
     // 정렬 컬럼 유효성 검사를 위한 헬퍼 메서드 (수정 없음)
     private boolean isValidSortColumn(String sortBy) {
         if (sortBy == null || sortBy.isEmpty()) {
@@ -83,13 +111,13 @@ public class ProductController {
                 "lowprice",
                 "discount",
                 "productid",
-                "name",
+                "name", // DTO에는 productName이 있지만, sortProperty는 DB 컬럼명이나 엔티티 필드명을 따름
                 "createdat",
                 "salescount",
-                "sellingprice",
+                "sellingprice", // Products 엔티티에 sellingPrice 필드가 있는지 확인
                 "originalprice",
                 "stock",
-                "viewcount",
+                "viewcount", // Products 엔티티에 viewCount 필드가 있는지 확인
                 "discountedprice",
                 "discountrate"
         ).contains(sortBy.toLowerCase());
@@ -101,5 +129,13 @@ public class ProductController {
             return true;
         }
         return sortDirection.equalsIgnoreCase("asc") || sortDirection.equalsIgnoreCase("desc");
+    }
+
+    // 새로운 헬퍼 메서드: 상품 상태 유효성 검사 (추가)
+    private boolean isValidProductState(String state) {
+        if (state == null || state.isEmpty()) {
+            return false; // 상태 값은 필수
+        }
+        return Arrays.asList("판매중", "품절임박", "품절").contains(state);
     }
 }
