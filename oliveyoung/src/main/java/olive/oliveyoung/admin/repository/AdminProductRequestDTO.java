@@ -1,0 +1,27 @@
+package olive.oliveyoung.admin.repository;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+public class AdminProductRequestDTO {
+
+    private String productName;
+    private String categoryName;
+    private Integer stock;
+    private Integer originalPrice;
+
+    private String imageUrl;
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ProductStatus status;
+
+
+}

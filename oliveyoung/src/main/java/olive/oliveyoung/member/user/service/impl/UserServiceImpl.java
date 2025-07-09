@@ -133,15 +133,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
 
         // PATCH 요청에 맞춰 null이 아닌 필드만 업데이트
-        if (userUpdateRequest.getUserName() != null) {
-            user.setUserName(userUpdateRequest.getUserName());
-        }
-        if (userUpdateRequest.getEmail() != null) {
-            user.setEmail(userUpdateRequest.getEmail());
-        }
-        if (userUpdateRequest.getPhone() != null) {
-            user.setPhone(userUpdateRequest.getPhone());
-        }
+//        if (userUpdateRequest.getUserName() != null) {
+//            user.setUserName(userUpdateRequest.getUserName());
+//        }
+//        if (userUpdateRequest.getEmail() != null) {
+//            user.setEmail(userUpdateRequest.getEmail());
+//        }
+//        if (userUpdateRequest.getPhone() != null) {
+//            user.setPhone(userUpdateRequest.getPhone());
+//        }
 
         userRepository.save(user);
     }
