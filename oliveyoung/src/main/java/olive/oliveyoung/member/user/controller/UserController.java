@@ -28,7 +28,6 @@ public class UserController {
 
     private final UserService userService;
 
-
     /**
      * 회원가입 전 회원 중복 체크 - 전화번호로 체크
      */
@@ -42,6 +41,16 @@ public class UserController {
         return ResponseEntity.ok(
                 ApiResponse.success(result, HttpStatus.OK.value())
         );
+    }
+
+    /**
+     * 회원가입 중 회원 아이디 중복 체크 - 전화번호로 체크
+     */
+    @PostMapping("/user/signup/checkid")
+    public ResponseEntity<Map<String, Boolean>> checkUserId(@RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        boolean isDuplicate = userService.isUserIdDuplicate(userId);
+        return ResponseEntity.ok(Map.of("duplicate", isDuplicate));
     }
 
     /**

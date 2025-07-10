@@ -6,6 +6,7 @@ import olive.oliveyoung.config.jwt.JwtTokenProvider;
 import olive.oliveyoung.member.user.domain.RefreshToken;
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.dto.request.LoginRequest;
+import olive.oliveyoung.member.user.dto.response.LoginResponse;
 import olive.oliveyoung.member.user.dto.response.TokenResponse;
 import olive.oliveyoung.member.user.repository.RefreshTokenRepository;
 import olive.oliveyoung.member.user.repository.UserRepository;
@@ -31,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public TokenResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
 
         User user = userRepository.findByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new BadCredentialsException("올바르지 않은 아이디 혹은 비밀번호"));
@@ -61,9 +62,10 @@ public class AuthServiceImpl implements AuthService {
 
         refreshTokenRepository.save(tokenEntity);
 
-        return TokenResponse.builder()
+        return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .userName(user.getUserName())
                 .build();
     }
 
