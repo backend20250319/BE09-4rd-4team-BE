@@ -16,7 +16,9 @@ public class ReviewResponseDto {
     private String userName; // userId -> userName
     private Long productId;
     private Double rating;
-    private String content;
+    private String skinType;
+    private String skinConcern;
+    private String texture;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

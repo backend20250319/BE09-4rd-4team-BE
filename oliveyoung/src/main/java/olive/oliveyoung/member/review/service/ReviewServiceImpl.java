@@ -98,7 +98,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .userName(review.getUser().getUserName())
                 .productId(review.getProduct().getProductId())
                 .rating(review.getRating())
-                .content(review.getContent())
+                .texture(review.getTexture())
+                .skinType(review.getSkinType())
+                .skinConcern(review.getSkinConcern())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
                 .build();
