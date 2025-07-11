@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import olive.oliveyoung.member.order.repository.OrderRepository;
 import olive.oliveyoung.member.review.repository.ReviewRepository;
+import olive.oliveyoung.member.user.dto.response.LoginResponse;
 import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
