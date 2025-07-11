@@ -96,7 +96,6 @@ public class UserServiceImpl implements UserService {
 
         // DB에 저장
         userRepository.save(user);
-
     }
 
     /**

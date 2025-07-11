@@ -9,7 +9,7 @@ import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 
 public interface UserService {
 
-    UserInfoResponse signUp(UserSignUpRequest request);
+    void signUp(UserSignUpRequest request);
 
     void withdraw(String username, UserWithdrawRequest request);
 
