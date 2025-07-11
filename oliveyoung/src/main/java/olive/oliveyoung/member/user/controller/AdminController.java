@@ -1,6 +1,7 @@
 package olive.oliveyoung.member.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import olive.oliveyoung.member.user.common.ApiResponse;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.response.AdminUserDetailResponse;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/users")
+@Slf4j
 public class AdminController {
 
     private final AdminService adminService;
@@ -40,14 +42,15 @@ public class AdminController {
     /**
      * 관리자 계정 생성 (초기 설정용)
      */
-//    @PostMapping("/create-admin")
-//    public ResponseEntity<ApiResponse<Void>> createAdminUser(@RequestBody UserSignUpRequest request){
-//        adminService.createAdminUser(request.getUserId(), request.getPassword(), request.getUserName(), request.getEmail(), request.getPhone());
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(ApiResponse.<Void>builder()
-//                        .success(true)
-//                        .message("관리자 계정이 성공적으로 생성되었습니다.")
-//                        .status(HttpStatus.CREATED.value())
-//                        .build());
-//    }
+    @PostMapping("/create-admin")
+    public ResponseEntity<ApiResponse<Void>> createAdminUser(@RequestBody UserSignUpRequest request){
+        log.info("createAdminUser======>  {} ", request);
+        adminService.createAdminUser(request.getUserId(), request.getPassword(), request.getUserName(), request.getEmail(), request.getPhone());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("관리자 계정이 성공적으로 생성되었습니다.")
+                        .status(HttpStatus.CREATED.value())
+                        .build());
+    }
 }

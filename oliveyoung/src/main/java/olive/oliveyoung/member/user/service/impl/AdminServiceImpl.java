@@ -1,5 +1,6 @@
 package olive.oliveyoung.member.user.service.impl;
 
+import olive.oliveyoung.member.user.domain.Role;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.domain.User;
@@ -66,24 +67,24 @@ public class AdminServiceImpl implements AdminService {
     /**
      * 관리자 계정 생성
      */
-//    @Override
-//    @Transactional
-//    public void createAdminUser(String userId, String password, String userName, String email, String phone) {
-//        if (adminRepository.existsByUserId(userId)) {
-//            throw new IllegalArgumentException("이미 사용 중인 관리자 ID입니다.");
-//        }
-//
-//        String encodedPassword = passwordEncoder.encode(password);
-//
-//        User adminUser = User.builder()
-//                .userId(userId)
-//                .password(encodedPassword)
-//                .userName(userName)
-//                .email(email)
-//                .phone(phone)
-//                .role(Role.ADMIN) // 관리자 권한 부여
-//                .build();
-//
-//        adminRepository.save(adminUser);
-//    }
+    @Override
+    @Transactional
+    public void createAdminUser(String userId, String password, String userName, String email, String phone) {
+        if (adminRepository.existsByUserId(userId)) {
+            throw new IllegalArgumentException("이미 사용 중인 관리자 ID입니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User adminUser = User.builder()
+                .userId(userId)
+                .password(encodedPassword)
+                .userName(userName)
+                .email(email)
+                .phone(phone)
+                .role(Role.ADMIN) // 관리자 권한 부여
+                .build();
+
+        adminRepository.save(adminUser);
+    }
 }
