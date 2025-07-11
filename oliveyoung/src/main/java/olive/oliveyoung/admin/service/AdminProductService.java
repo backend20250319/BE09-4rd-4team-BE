@@ -21,7 +21,7 @@ public class AdminProductService {
                 .originalPrice(dto.getOriginalPrice())
                 .imageUrl(dto.getImageUrl())
                 .description(dto.getDescription())
-                .status(dto.getStatus())
+                .state(dto.getState())
                 .build();
         return productRepository.save(product);
     }

@@ -19,9 +19,6 @@ public class AdminProductRequestDTO {
     private String imageUrl;
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private ProductStatus status;
-
+    private String state;
 
 }
