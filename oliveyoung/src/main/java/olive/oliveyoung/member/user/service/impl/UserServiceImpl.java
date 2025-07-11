@@ -2,6 +2,7 @@ package olive.oliveyoung.member.user.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import olive.oliveyoung.member.order.repository.OrderRepository;
 import olive.oliveyoung.member.review.repository.ReviewRepository;
 import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -28,10 +31,15 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ReviewRepository reviewRepository;
     private final AddressRepository addressRepository;
+    private final OrderRepository orderRepository;
 
+    /**
+     * 회원가입 전 회원 중복 체크 - 회원 이름, 회원 전화번호
+     */
     @Override
-    public boolean existsByNameAndPhone(String userName, String phone) {
-        return userRepository.existsByUserNameAndPhone(userName, phone);
+    public Optional<String> getUserByNameAndPhone(String userName, String phone) {
+        return userRepository.findByUserNameAndPhone(userName, phone)
+                .map(User::getUserId);
     }
 
     /**
@@ -117,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
         // 연관 엔티티 순서대로 삭제
         reviewRepository.deleteByUser(user);
-//        orderRepository.deleteByUser(user);
+        orderRepository.deleteByUser(user);
         addressRepository.deleteByUser(user);
 
         // 사용자 삭제
