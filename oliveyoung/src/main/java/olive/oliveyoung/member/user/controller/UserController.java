@@ -33,7 +33,7 @@ public class UserController {
      */
     @PostMapping("/user/checkduplicate")
     public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkDuplicate(@RequestBody DuplicateCheckRequest request) {
-        boolean isDuplicate = userService.existsByPhone(request.getPhone());
+        boolean isDuplicate = userService.existsByNameAndPhone(request.getUserName(), request.getPhone());
 
         Map<String, Boolean> result = new HashMap<>();
         result.put("이미 사용 중인 전화번호입니다.", isDuplicate);

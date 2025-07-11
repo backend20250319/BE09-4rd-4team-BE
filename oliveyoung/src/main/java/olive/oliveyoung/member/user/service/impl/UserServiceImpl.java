@@ -25,9 +25,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Override
+    public boolean existsByNameAndPhone(String userName, String phone) {
+        return userRepository.existsByUserNameAndPhone(userName, phone);
+    }
 
     /**
      * 회원가입 전 회원 중복 체크 - 회원 이름
+     * 미사용
      */
     @Override
     public boolean existsByUserName(String userName) {
@@ -36,6 +41,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원가입 전 회원 중복 체크 - 회원 전화번호
+     * 미사용
      */
     @Override
     public boolean existsByPhone(String phone) {
