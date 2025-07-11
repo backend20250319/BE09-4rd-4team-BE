@@ -19,6 +19,7 @@ public class ReviewResponseDto {
     private String skinType;
     private String skinConcern;
     private String texture;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

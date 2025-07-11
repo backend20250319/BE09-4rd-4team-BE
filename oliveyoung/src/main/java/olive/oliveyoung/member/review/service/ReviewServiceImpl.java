@@ -100,6 +100,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .rating(review.getRating())
                 .texture(review.getTexture())
                 .skinType(review.getSkinType())
+                .content(review.getContent())
                 .skinConcern(review.getSkinConcern())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
