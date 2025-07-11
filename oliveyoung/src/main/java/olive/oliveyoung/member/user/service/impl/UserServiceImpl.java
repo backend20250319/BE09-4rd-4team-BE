@@ -2,6 +2,8 @@ package olive.oliveyoung.member.user.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import olive.oliveyoung.member.review.repository.ReviewRepository;
+import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.domain.Role;
@@ -24,6 +26,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ReviewRepository reviewRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public boolean existsByNameAndPhone(String userName, String phone) {
@@ -110,6 +114,11 @@ public class UserServiceImpl implements UserService {
 
         // Refresh Token 삭제
         refreshTokenRepository.deleteByUserId(userId);
+
+        // 연관 엔티티 순서대로 삭제
+        reviewRepository.deleteByUser(user);
+//        orderRepository.deleteByUser(user);
+        addressRepository.deleteByUser(user);
 
         // 사용자 삭제
         userRepository.delete(user);
