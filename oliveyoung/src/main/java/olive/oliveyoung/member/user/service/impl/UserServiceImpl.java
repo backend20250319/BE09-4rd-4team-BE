@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
         // 연관 엔티티 순서대로 삭제
         reviewRepository.deleteByUser(user);
-        orderRepository.deleteByUser(user);
+//        orderRepository.deleteByUser(user);
         addressRepository.deleteByUser(user);
 
         // 사용자 삭제
