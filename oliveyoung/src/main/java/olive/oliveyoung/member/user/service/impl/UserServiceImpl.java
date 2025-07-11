@@ -1,10 +1,10 @@
 package olive.oliveyoung.member.user.service.impl;
 
 
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import olive.oliveyoung.member.order.repository.OrderRepository;
-
 import olive.oliveyoung.member.review.repository.ReviewRepository;
 import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.repository.AddressRepository;
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional
     @Override
-    public UserInfoResponse signUp(UserSignUpRequest request) {
+    public void signUp(UserSignUpRequest request) {
         // 아이디 중복 체크
         if (userRepository.existsByUserId(request.getUserId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
