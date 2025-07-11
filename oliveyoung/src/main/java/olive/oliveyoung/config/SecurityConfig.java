@@ -32,6 +32,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/carts/**").hasRole("USER")
+                        .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers( "/api/products/**", "/api/brands/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
@@ -42,7 +44,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/mypage/**").hasRole("USER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")  //  .permitAll()//// 관리자 API는 ADMIN 권한 필요
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/carts/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

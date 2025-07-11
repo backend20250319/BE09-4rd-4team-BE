@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import olive.oliveyoung.member.user.domain.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "carts")
 @Getter
@@ -24,7 +27,10 @@ public class Carts {
     @JoinColumn(name = "user_no", referencedColumnName = "user_no", unique = true)
     private User user;
 
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItems> cartItems = new ArrayList<>();
+
     public static Carts create(User user) {
-        return new Carts(null, user);
+        return new Carts(null, user, new ArrayList<>());
     }
 }

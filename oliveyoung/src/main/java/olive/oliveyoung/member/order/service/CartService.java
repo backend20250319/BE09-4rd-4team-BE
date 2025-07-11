@@ -89,4 +89,32 @@ public class CartService {
                 .map(CartItemResponse::from)
                 .collect(Collectors.toList());
     }
+
+    // 장바구니 상품 개수 변경
+    public CartItemResponse updateCartItem(Long cartItemId, Integer quantity) {
+
+        // 1. cartItemId로 해당 항목 조회
+        CartItems cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("해당 장바구니 항목이 존재하지 않습니다."));
+
+        // 2. 수량 수정
+        cartItem.setQuantity(quantity);
+
+        // 3. 저장
+        cartItemRepository.save(cartItem);
+
+        // 4. 응답 DTO로 변환
+        return CartItemResponse.from(cartItem);
+    }
+
+    // 장바구니 상품 삭제
+    public void deleteCartItem(Long cartItemId) {
+
+        // 1. cartItemId로 해당 항목 조회
+        CartItems cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("해당 장바구니 항목이 존재하지 않습니다."));
+
+        // 2. 삭제
+        cartItemRepository.delete(cartItem);
+    }
 }
