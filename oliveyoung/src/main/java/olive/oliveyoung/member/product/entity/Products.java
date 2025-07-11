@@ -58,11 +58,11 @@ public class Products {
     @Column(name = "state")
     private String state;
 
-//    @Column(name = "thumbnail_images")
-//    private String thumbnailImages;
+    @Column(name = "thumbnail_images")
+    private String thumbnailImages;
 
-//    @Column(name = "description_images")
-//    private String descriptionImages;
+    @Column(name = "description_images")
+    private String descriptionImages;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
