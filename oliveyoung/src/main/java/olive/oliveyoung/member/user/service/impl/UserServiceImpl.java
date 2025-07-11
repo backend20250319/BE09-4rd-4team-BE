@@ -1,9 +1,12 @@
 package olive.oliveyoung.member.user.service.impl;
 
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import olive.oliveyoung.member.order.repository.OrderRepository;
+
 import olive.oliveyoung.member.review.repository.ReviewRepository;
+import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +73,12 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원가입
+     *
+     * @return
      */
     @Transactional
     @Override
-    public void signUp(UserSignUpRequest request) {
+    public UserInfoResponse signUp(UserSignUpRequest request) {
         // 아이디 중복 체크
         if (userRepository.existsByUserId(request.getUserId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
@@ -105,6 +110,7 @@ public class UserServiceImpl implements UserService {
         // DB에 저장
         userRepository.save(user);
 
+        return null;
     }
 
     /**
