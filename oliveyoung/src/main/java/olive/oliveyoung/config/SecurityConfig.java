@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/carts/**").hasRole("USER")
+                        .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers( "/api/products/**", "/api/brands/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
