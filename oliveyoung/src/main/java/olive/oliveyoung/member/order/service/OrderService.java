@@ -124,4 +124,9 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
     }
+
+
+
+    public List<OrderResponse> getAllOrders() {
+    }
 }
