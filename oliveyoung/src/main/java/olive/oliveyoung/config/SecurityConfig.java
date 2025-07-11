@@ -29,11 +29,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers( "/api/products/**", "/api/brands/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**/reviews").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
