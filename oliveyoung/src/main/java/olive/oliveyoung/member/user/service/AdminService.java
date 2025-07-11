@@ -11,5 +11,5 @@ public interface AdminService {
 
     AdminUserDetailResponse getUserDetailForAdmin(String userId);
 
-//    void createAdminUser(String userId, String password, String userName, String email, String phone);
+    void createAdminUser(String userId, String password, String userName, String email, String phone);
 }

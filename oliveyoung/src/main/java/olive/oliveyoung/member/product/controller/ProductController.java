@@ -23,12 +23,12 @@ public class ProductController {
     }
 
     // GET http://localhost:8080/api/products/skintoner/{productIdentifier}
-    @GetMapping("/skintoner/{productIdentifier}")
-    public ResponseEntity<ProductResponseDTO> getSkinTonerProductByIdentifier(@PathVariable String productIdentifier) {
-        return productService.getSkinTonerProductByIdentifier(productIdentifier)
-                .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+//    @GetMapping("/skintoner/{productIdentifier}")
+//    public ResponseEntity<ProductResponseDTO> getSkinTonerProductByIdentifier(@PathVariable String productIdentifier) {
+//        return productService.getSkinTonerProductByIdentifier(productIdentifier)
+//                .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK))
+//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//    }
 
     // 1. 모든 상품 목록 조회 API (정렬 포함)
     @GetMapping
@@ -49,11 +49,10 @@ public class ProductController {
 
     // 2. 특정 상품 상세 조회 API
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable String productId) {
-        Long id = Long.parseLong(productId.replace("product", ""));
-        return productService.getProductById(id)
-                .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long productId) {
+        return productService.getProductById(productId)
+                .map(dto -> ResponseEntity.ok(dto))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 3. 상품 검색 및 필터링 API (검색 조건 및 정렬 포함)
