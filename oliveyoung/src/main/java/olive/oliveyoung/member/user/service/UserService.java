@@ -16,7 +16,11 @@ public interface UserService {
 
     void updateUser(String userId, UserUpdateRequest userUpdateRequest);
 
+    boolean existsByNameAndPhone(String userName, String phone);
+
     boolean existsByUserName(String userName);
+
+    boolean isUserIdDuplicate(String userId);
 
     boolean existsByPhone(String phone);
 }
