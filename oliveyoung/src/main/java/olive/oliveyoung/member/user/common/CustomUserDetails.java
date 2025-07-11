@@ -22,8 +22,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        String authority = "ROLE_" + user.getRole().name();
+        System.out.println("✅ 사용자 권한: " + authority);  // 콘솔 출력
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
+
+
 
     @Override
     public String getPassword() {
