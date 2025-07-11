@@ -7,6 +7,7 @@ import olive.oliveyoung.member.user.dto.request.DuplicateCheckRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
+import olive.oliveyoung.member.user.dto.response.UserCheckBeforeSignUpResponse;
 import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /* 회원가입, 회원 정보 수정, 회원 탈퇴 */
 @RestController
@@ -32,16 +34,19 @@ public class UserController {
      * 회원가입 전 회원 중복 체크 - 전화번호로 체크
      */
     @PostMapping("/user/checkduplicate")
-    public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkDuplicate(@RequestBody DuplicateCheckRequest request) {
-        boolean isDuplicate = userService.existsByNameAndPhone(request.getUserName(), request.getPhone());
+    public ResponseEntity<ApiResponse<UserCheckBeforeSignUpResponse>> checkDuplicate(@RequestBody DuplicateCheckRequest request) {
+        Optional<String> duplicatedUserId = userService.getUserByNameAndPhone(request.getUserName(), request.getPhone());
 
-        Map<String, Boolean> result = new HashMap<>();
-        result.put("이미 사용 중인 전화번호입니다.", isDuplicate);
-
-        return ResponseEntity.ok(
-                ApiResponse.success(result, HttpStatus.OK.value())
+        UserCheckBeforeSignUpResponse response = new UserCheckBeforeSignUpResponse(
+                duplicatedUserId.isPresent(),
+                duplicatedUserId.orElse(null)
         );
+
+        System.out.println("response: " + response.getUserId() + " & " + response.isDuplicate());
+
+        return ResponseEntity.ok(ApiResponse.success(response, HttpStatus.OK.value()));
     }
+
 
     /**
      * 회원가입 중 회원 아이디 중복 체크 - 전화번호로 체크

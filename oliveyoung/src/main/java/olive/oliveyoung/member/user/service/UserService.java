@@ -6,10 +6,12 @@ import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
 import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 
+import java.util.Optional;
+
 
 public interface UserService {
 
-    UserInfoResponse signUp(UserSignUpRequest request);
+    void signUp(UserSignUpRequest request);
 
     void withdraw(String username, UserWithdrawRequest request);
 
@@ -17,7 +19,7 @@ public interface UserService {
 
     void updateUser(String userId, UserUpdateRequest userUpdateRequest);
 
-    boolean existsByNameAndPhone(String userName, String phone);
+    Optional<String> getUserByNameAndPhone(String userName, String phone);
 
     boolean existsByUserName(String userName);
 
