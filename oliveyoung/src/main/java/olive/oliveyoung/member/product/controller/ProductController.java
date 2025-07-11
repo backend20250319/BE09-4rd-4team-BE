@@ -47,10 +47,11 @@ public class ProductController {
         return new ResponseEntity<>(productDTOs, HttpStatus.OK);
     }
 
-    // 2. 특정 상품 상세 조회 API (기존 Long ID 사용)
+    // 2. 특정 상품 상세 조회 API
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long productId) {
-        return productService.getProductById(productId)
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable String productId) {
+        Long id = Long.parseLong(productId.replace("product", ""));
+        return productService.getProductById(id)
                 .map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
