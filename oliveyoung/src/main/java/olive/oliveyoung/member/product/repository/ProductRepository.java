@@ -20,4 +20,5 @@ public interface ProductRepository extends JpaRepository<Products, Long> {
 
     // 상품 상태별 상품 조회를 위한 메서드
     List<Products> findByState(String productState);
+
 }
