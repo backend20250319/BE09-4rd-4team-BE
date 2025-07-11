@@ -25,6 +25,8 @@ public class ProductResponseDTO {
     private Integer salesCount;
     private String state;
     private String discountRate;
+    private String thumbnailImages;
+    private String descriptionImages;
 
 
     public ProductResponseDTO(Products product) {
@@ -39,6 +41,8 @@ public class ProductResponseDTO {
         this.createdAt = product.getCreatedAt();
         this.salesCount = product.getSalesCount();
         this.state = product.getState();
+//        this.thumbnailImages = product.getThumbnailImages();
+//        this.descriptionImages = product.getDescriptionImages();
 
         if (product.getDiscountRate() != null) {
             this.discountRate = product.getDiscountRate() + "%";
