@@ -1,6 +1,7 @@
 package olive.oliveyoung.member.product.entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Description;
 import lombok.*;
 
 import olive.oliveyoung.member.review.entity.Review;
@@ -56,6 +57,11 @@ public class Products {
 
     @Column(name = "state")
     private String state;
+
+    @Column(name = t)
+
+    @Column(name = "description_images")
+    private String descriptionImages;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
