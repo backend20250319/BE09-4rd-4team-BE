@@ -5,6 +5,7 @@ import olive.oliveyoung.config.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -12,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,17 +29,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/carts/**").hasRole("USER")
+                        .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers( "/api/products/**", "/api/brands/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/**/reviews").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/*/reviews/average-rating").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users/*/reviews").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/admin/users/create-admin").permitAll()
                         .requestMatchers("/api/auth/**").authenticated()
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/mypage/**").hasRole("USER")

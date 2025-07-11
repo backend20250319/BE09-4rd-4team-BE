@@ -17,3 +17,7 @@ jwt:
   refresh-expiration: 1209600000 # 14일 (밀리초)
   header: Authorization
   prefix: Bearer
+
+logging:
+  level:
+    org.springframework.security: DEBUG

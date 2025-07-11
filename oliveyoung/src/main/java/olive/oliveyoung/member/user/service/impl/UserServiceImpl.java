@@ -1,6 +1,9 @@
 package olive.oliveyoung.member.user.service.impl;
 
-import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import olive.oliveyoung.member.review.repository.ReviewRepository;
+import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.domain.Role;
@@ -23,10 +26,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ReviewRepository reviewRepository;
+    private final AddressRepository addressRepository;
 
+    @Override
+    public boolean existsByNameAndPhone(String userName, String phone) {
+        return userRepository.existsByUserNameAndPhone(userName, phone);
+    }
 
     /**
      * 회원가입 전 회원 중복 체크 - 회원 이름
+     * 미사용
      */
     @Override
     public boolean existsByUserName(String userName) {
@@ -35,21 +45,27 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원가입 전 회원 중복 체크 - 회원 전화번호
+     * 미사용
      */
     @Override
     public boolean existsByPhone(String phone) {
         return userRepository.existsByPhone(phone);
     }
 
+    /**
+     * 회원가입 중 아이디 중복 체크
+     */
+    @Override
+    public boolean isUserIdDuplicate(String userId) {
+        return userRepository.existsByUserId(userId);
+    }
 
     /**
      * 회원가입
-     *
-     * @return
      */
     @Transactional
     @Override
-    public UserInfoResponse signUp(UserSignUpRequest request) {
+    public void signUp(UserSignUpRequest request) {
         // 아이디 중복 체크
         if (userRepository.existsByUserId(request.getUserId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
@@ -81,7 +97,6 @@ public class UserServiceImpl implements UserService {
         // DB에 저장
         userRepository.save(user);
 
-        return null;
     }
 
     /**
@@ -99,6 +114,11 @@ public class UserServiceImpl implements UserService {
 
         // Refresh Token 삭제
         refreshTokenRepository.deleteByUserId(userId);
+
+        // 연관 엔티티 순서대로 삭제
+        reviewRepository.deleteByUser(user);
+//        orderRepository.deleteByUser(user);
+        addressRepository.deleteByUser(user);
 
         // 사용자 삭제
         userRepository.delete(user);
@@ -135,15 +155,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BadCredentialsException("사용자를 찾을 수 없습니다."));
 
         // PATCH 요청에 맞춰 null이 아닌 필드만 업데이트
-//        if (userUpdateRequest.getUserName() != null) {
-//            user.setUserName(userUpdateRequest.getUserName());
-//        }
-//        if (userUpdateRequest.getEmail() != null) {
-//            user.setEmail(userUpdateRequest.getEmail());
-//        }
-//        if (userUpdateRequest.getPhone() != null) {
-//            user.setPhone(userUpdateRequest.getPhone());
-//        }
+        if (userUpdateRequest.getUserName() != null) {
+            user.setUserName(userUpdateRequest.getUserName());
+        }
+        if (userUpdateRequest.getEmail() != null) {
+            user.setEmail(userUpdateRequest.getEmail());
+        }
+        if (userUpdateRequest.getPhone() != null) {
+            user.setPhone(userUpdateRequest.getPhone());
+        }
 
         userRepository.save(user);
     }
