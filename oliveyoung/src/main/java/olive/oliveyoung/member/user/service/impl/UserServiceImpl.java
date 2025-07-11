@@ -1,7 +1,12 @@
 package olive.oliveyoung.member.user.service.impl;
 
+
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import olive.oliveyoung.member.order.repository.OrderRepository;
 import olive.oliveyoung.member.review.repository.ReviewRepository;
+import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 import olive.oliveyoung.member.user.repository.AddressRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +73,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원가입
+     *
+     * @return
      */
     @Transactional
     @Override
@@ -103,6 +110,7 @@ public class UserServiceImpl implements UserService {
         // DB에 저장
         userRepository.save(user);
 
+        return null;
     }
 
     /**
