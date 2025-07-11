@@ -58,7 +58,8 @@ public class Products {
     @Column(name = "state")
     private String state;
 
-//    @Column(name = t)
+//    @Column(name = "thumbnail_images")
+//    private String thumbnailImages;
 
 //    @Column(name = "description_images")
 //    private String descriptionImages;
