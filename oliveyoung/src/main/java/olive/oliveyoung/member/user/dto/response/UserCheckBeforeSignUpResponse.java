@@ -9,5 +9,7 @@ import lombok.*;
 public class UserCheckBeforeSignUpResponse {
 
     private boolean isDuplicate;
+    private String userId;
 
 }
+
