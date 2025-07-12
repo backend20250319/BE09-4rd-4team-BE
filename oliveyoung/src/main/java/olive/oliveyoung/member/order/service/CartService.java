@@ -12,6 +12,7 @@ import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,14 +79,18 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("해당 사용자는 존재하지 않습니다."));
 
         // 2. 장바구니 조회
-        Carts cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("장바구니가 존재하지 않습니다."));
+        Optional<Carts> optionalCart = cartRepository.findByUser(user);
+
+        if (optionalCart.isEmpty()) {
+            return new ArrayList<>(); // 장바구니 없음 → 빈 리스트 반환
+        }
 
         // 3. 해당 장바구니의 모든 상품 정보 가져오기
+        Carts cart = optionalCart.get();
         List<CartItems> cartItems = cartItemRepository.findByCart(cart);
 
         // 4. 응답 DTO로 변환
-        return cartItems.stream()
+        return cartItems == null ? new ArrayList<>() : cartItems.stream()
                 .map(CartItemResponse::from)
                 .collect(Collectors.toList());
     }

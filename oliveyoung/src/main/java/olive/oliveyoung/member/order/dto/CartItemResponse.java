@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import olive.oliveyoung.member.order.entity.CartItems;
+import olive.oliveyoung.member.product.entity.Badges;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,6 +24,8 @@ public class CartItemResponse {
     private Integer originalPrice;
     private Integer discountedPrice;
     private Integer quantity;
+    private String imageUrl;
+    private List<String> badges;
 
     public static CartItemResponse from(CartItems item) {
         CartItemResponse res =  new CartItemResponse();
@@ -31,6 +37,14 @@ public class CartItemResponse {
         res.setOriginalPrice(item.getProduct().getOriginalPrice());
         res.setDiscountedPrice(item.getProduct().getDiscountedPrice());
         res.setQuantity(item.getQuantity());
+        res.setImageUrl(item.getProduct().getImageUrl());
+
+        res.setBadges(
+                item.getProduct().getBadges()
+                        .stream()
+                        .map(Badges::getName)
+                        .collect(Collectors.toList())
+        );
         return res;
     }
 }
