@@ -1,4 +1,4 @@
-package olive.oliveyoung.member.coupon.domain.coupon;
+package olive.oliveyoung.member.coupon.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").authenticated()
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/mypage/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/coupons").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")  //  .permitAll()//// 관리자 API는 ADMIN 권한 필요
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated()

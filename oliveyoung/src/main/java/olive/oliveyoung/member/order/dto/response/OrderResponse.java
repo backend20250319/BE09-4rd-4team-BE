@@ -1,4 +1,4 @@
-package olive.oliveyoung.member.order.dto;
+package olive.oliveyoung.member.order.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package olive.oliveyoung.member.order.service;
 
-import olive.oliveyoung.member.order.dto.CartItemRequest;
-import olive.oliveyoung.member.order.dto.CartItemResponse;
+import olive.oliveyoung.member.order.dto.request.CartItemRequest;
+import olive.oliveyoung.member.order.dto.response.CartItemResponse;
 import olive.oliveyoung.member.order.entity.CartItems;
 import olive.oliveyoung.member.order.entity.Carts;
 import olive.oliveyoung.member.order.repository.CartItemRepository;

@@ -1,4 +1,4 @@
-package olive.oliveyoung.member.order.dto;
+package olive.oliveyoung.member.order.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +18,8 @@ public class OrderItemResponse {
     private String productName;
     private Integer discountedPrice;
     private Integer quantity;
+    private Integer price;
+    private String imageUrl;
 
     public static OrderItemResponse from(OrderItems item) {
         OrderItemResponse res =  new OrderItemResponse();
@@ -27,6 +29,8 @@ public class OrderItemResponse {
         res.setProductName(item.getProduct().getProductName());
         res.setDiscountedPrice(item.getProduct().getDiscountedPrice());
         res.setQuantity(item.getQuantity());
+        res.setPrice(item.getPrice());
+        res.setImageUrl(item.getProduct().getImageUrl());
         return res;
     }
 }

@@ -1,7 +1,7 @@
 package olive.oliveyoung.member.order.controller;
 
-import olive.oliveyoung.member.order.dto.CartItemRequest;
-import olive.oliveyoung.member.order.dto.CartItemResponse;
+import olive.oliveyoung.member.order.dto.request.CartItemRequest;
+import olive.oliveyoung.member.order.dto.response.CartItemResponse;
 import olive.oliveyoung.member.order.service.CartService;
 import olive.oliveyoung.member.user.common.CustomUserDetails;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

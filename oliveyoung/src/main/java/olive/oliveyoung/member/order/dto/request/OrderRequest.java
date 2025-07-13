@@ -1,4 +1,4 @@
-package olive.oliveyoung.member.order.dto;
+package olive.oliveyoung.member.order.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,4 +15,5 @@ public class OrderRequest {
 
     private Long addressId;
     private List<Long> cartItemIds;
+    private Double discount;
 }

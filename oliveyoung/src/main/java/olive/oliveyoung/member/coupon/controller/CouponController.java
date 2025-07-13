@@ -6,7 +6,7 @@ import olive.oliveyoung.member.coupon.service.CouponService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import olive.oliveyoung.member.coupon.domain.coupon.Coupon;
+import olive.oliveyoung.member.coupon.domain.Coupon;
 
 import java.util.List;
 import java.util.Map;
