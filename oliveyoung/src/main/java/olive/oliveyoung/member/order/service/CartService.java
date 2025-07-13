@@ -12,6 +12,8 @@ import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,10 +37,10 @@ public class CartService {
     }
 
     // 장바구니에 상품 추가
-    public CartItemResponse addCartItem(CartItemRequest request) {
+    public CartItemResponse addCartItem(String userId, CartItemRequest request) {
 
         // 1. 사용자 찾기
-        User user = userRepository.findByUserId(String.valueOf(request.getUserId()))
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("해당 사용자는 존재하지 않습니다."));
 
         // 2. 상품 찾기
@@ -78,27 +80,32 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("해당 사용자는 존재하지 않습니다."));
 
         // 2. 장바구니 조회
-        Carts cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("장바구니가 존재하지 않습니다."));
+        Optional<Carts> optionalCart = cartRepository.findByUser(user);
+
+        if (optionalCart.isEmpty()) {
+            return new ArrayList<>(); // 장바구니 없음 → 빈 리스트 반환
+        }
 
         // 3. 해당 장바구니의 모든 상품 정보 가져오기
+        Carts cart = optionalCart.get();
         List<CartItems> cartItems = cartItemRepository.findByCart(cart);
 
         // 4. 응답 DTO로 변환
-        return cartItems.stream()
+        return cartItems == null ? new ArrayList<>() : cartItems.stream()
                 .map(CartItemResponse::from)
                 .collect(Collectors.toList());
     }
 
     // 장바구니 상품 개수 변경
-    public CartItemResponse updateCartItem(Long cartItemId, Integer quantity) {
+    public CartItemResponse updateCartItem(Long cartItemId, Integer quantity, LocalDateTime updatedAt) {
 
         // 1. cartItemId로 해당 항목 조회
         CartItems cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("해당 장바구니 항목이 존재하지 않습니다."));
 
-        // 2. 수량 수정
+        // 2. 수량 및 업데이트 시간 수정
         cartItem.setQuantity(quantity);
+        cartItem.getCart().setUpdatedAt(updatedAt);
 
         // 3. 저장
         cartItemRepository.save(cartItem);
