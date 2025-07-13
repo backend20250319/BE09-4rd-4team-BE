@@ -1,6 +1,7 @@
 package olive.oliveyoung.member.order.service;
 
 import olive.oliveyoung.member.order.controller.OrderIdGenerator;
+import olive.oliveyoung.admin.dto.AdminOrderResponse;
 import olive.oliveyoung.member.order.dto.OrderItemResponse;
 import olive.oliveyoung.member.order.dto.OrderRequest;
 import olive.oliveyoung.member.order.dto.OrderResponse;
@@ -120,6 +121,74 @@ public class OrderService {
                             order.getCreatedAt(),
                             order.getStatus(),
                             itemResponses
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+    public List<OrderResponse> getAllOrders() {
+        List<Orders> orders = orderRepository.findAll();
+
+        return orders.stream()
+                .map(order -> {
+                    List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
+                            .map(OrderItemResponse::from)
+                            .collect(Collectors.toList());
+
+                    return new OrderResponse(
+                            order.getOrderId(),
+                            order.getCreatedAt(),
+                            order.getStatus(),
+                            itemResponses
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<AdminOrderResponse> getAllOrdersForAdmin() {
+        List<Orders> orders = orderRepository.findAll();
+
+        return orders.stream()
+                .map(order -> {
+                    // Calculate total price from order items
+                    int totalPrice = order.getOrderItems().stream()
+                            .mapToInt(item -> item.getProduct().getDiscountedPrice() * item.getQuantity())
+                            .sum();
+
+                    // Format date as string (YYYY-MM-DD)
+                    String formattedDate = order.getCreatedAt().toLocalDate().toString();
+
+                    // Map status enum to Korean string
+                    String statusStr;
+                    switch (order.getStatus()) {
+                        case RECEIVED:
+                            statusStr = "주문접수";
+                            break;
+                        case PAID:
+                            statusStr = "결제완료";
+                            break;
+                        case READY:
+                            statusStr = "배송준비중";
+                            break;
+                        case SHIPPING:
+                            statusStr = "배송중";
+                            break;
+                        case COMPLETED:
+                            statusStr = "배송완료";
+                            break;
+                        default:
+                            statusStr = order.getStatus().toString();
+                    }
+
+                    return new AdminOrderResponse(
+                            order.getOrderId(),
+                            order.getUser().getUserName(),
+                            formattedDate,
+                            "₩ " + String.format("%,d", totalPrice),
+                            "카드결제", // Default payment method since we don't have this information
+                            statusStr
                     );
                 })
                 .collect(Collectors.toList());
