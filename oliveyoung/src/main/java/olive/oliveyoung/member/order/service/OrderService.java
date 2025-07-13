@@ -1,9 +1,9 @@
 package olive.oliveyoung.member.order.service;
 
 import olive.oliveyoung.member.order.controller.OrderIdGenerator;
-import olive.oliveyoung.member.order.dto.OrderItemResponse;
-import olive.oliveyoung.member.order.dto.OrderRequest;
-import olive.oliveyoung.member.order.dto.OrderResponse;
+import olive.oliveyoung.member.order.dto.response.OrderItemResponse;
+import olive.oliveyoung.member.order.dto.request.OrderRequest;
+import olive.oliveyoung.member.order.dto.response.OrderResponse;
 import olive.oliveyoung.member.order.entity.*;
 import olive.oliveyoung.member.order.repository.CartItemRepository;
 import olive.oliveyoung.member.order.repository.CartRepository;
@@ -73,12 +73,19 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
 
         List<OrderItems> orderItems = selectedItems.stream()
-                .map(cartItem -> new OrderItems(
-                        null,
-                        order,
-                        cartItem.getProduct(),
-                        cartItem.getQuantity()
-                ))
+                .map(cartItem -> {
+                    int originalPrice = cartItem.getProduct().getDiscountedPrice();
+                    int discountPrice = (int) (originalPrice * request.getDiscount() / 100);
+                    int finalPrice = (originalPrice - discountPrice) * cartItem.getQuantity();
+
+                    OrderItems orderItem = new OrderItems();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(cartItem.getProduct());
+                    orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setPrice(finalPrice);
+
+                    return orderItem;
+                })
                 .collect(Collectors.toList());
 
         order.setOrderItems(orderItems);

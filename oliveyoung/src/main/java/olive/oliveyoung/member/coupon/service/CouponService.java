@@ -1,7 +1,7 @@
 package olive.oliveyoung.member.coupon.service;
 
 import lombok.RequiredArgsConstructor;
-import olive.oliveyoung.member.coupon.domain.coupon.Coupon;
+import olive.oliveyoung.member.coupon.domain.Coupon;
 import olive.oliveyoung.member.coupon.dto.CreateCouponRequestDto;
 import olive.oliveyoung.member.coupon.repository.CouponRepository;
 import org.springframework.stereotype.Service;
