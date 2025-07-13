@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,11 @@ public class CartController {
 
     // 1. CREATE: 사용자 장바구니에 물품 넣기
     @PostMapping("/items")
-    public ResponseEntity<CartItemResponse> addCartItem(@RequestBody CartItemRequest request) {
-        CartItemResponse response = cartService.addCartItem(request);
+    public ResponseEntity<CartItemResponse> addCartItem(
+            @AuthenticationPrincipal CustomUserDetails details,
+            @RequestBody CartItemRequest request) {
+        String userId = details.getUsername();
+        CartItemResponse response = cartService.addCartItem(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -44,7 +48,8 @@ public class CartController {
     public ResponseEntity<CartItemResponse> updateCartItem(
             @PathVariable Long cartItemId, @RequestBody Map<String, Integer> quantityMap) {
         Integer quantity = quantityMap.get("quantity");
-        CartItemResponse response = cartService.updateCartItem(cartItemId, quantity);
+        LocalDateTime updatedAt = LocalDateTime.now();
+        CartItemResponse response = cartService.updateCartItem(cartItemId, quantity, updatedAt);
         return ResponseEntity.ok(response);
     }
 

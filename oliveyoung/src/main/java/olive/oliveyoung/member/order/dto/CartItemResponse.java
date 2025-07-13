@@ -7,6 +7,7 @@ import lombok.Setter;
 import olive.oliveyoung.member.order.entity.CartItems;
 import olive.oliveyoung.member.product.entity.Badges;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ public class CartItemResponse {
     private Integer quantity;
     private String imageUrl;
     private List<String> badges;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static CartItemResponse from(CartItems item) {
         CartItemResponse res =  new CartItemResponse();
@@ -38,7 +41,8 @@ public class CartItemResponse {
         res.setDiscountedPrice(item.getProduct().getDiscountedPrice());
         res.setQuantity(item.getQuantity());
         res.setImageUrl(item.getProduct().getImageUrl());
-
+        res.setCreatedAt(item.getCart().getCreatedAt());
+        res.setUpdatedAt(item.getCart().getUpdatedAt());
         res.setBadges(
                 item.getProduct().getBadges()
                         .stream()
