@@ -9,11 +9,13 @@ import java.util.List;
 
 @Service
 public interface ReviewService {
-    Long createReview(Long productId, ReviewRequestDto dto, String userId);
-    String updateReview(Long reviewId, ReviewUpdateDto dto, String userId);
-    String deleteReview(Long reviewId, String userId);
-    List<ReviewResponseDto> getReviewsByProduct(Long productId);
-    List<ReviewResponseDto> getReviewsByUser(String userId);
-    double getAverageRating(Long productId);
+    Long createReview(Long productId, ReviewRequestDto dto, Long userNo);         // 등록
+    String updateReview(Long reviewId, ReviewUpdateDto dto, Long userNo);         // 수정
+    String deleteReview(Long reviewId, Long userNo);                              // 삭제
+    List<ReviewResponseDto> getReviewsByProduct(Long productId);                  // 상품별 조회
+    List<ReviewResponseDto> getReviewsByUserNo(Long userNo);                      // 유저별 조회 (PK 기반)
+    double getAverageRating(Long productId);                                      // 평점
 }
+
+
 
