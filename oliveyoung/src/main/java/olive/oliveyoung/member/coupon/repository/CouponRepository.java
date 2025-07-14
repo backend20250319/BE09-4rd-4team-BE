@@ -1,6 +1,6 @@
 package olive.oliveyoung.member.coupon.repository;
 
-import olive.oliveyoung.member.coupon.domain.coupon.Coupon;
+import olive.oliveyoung.member.coupon.domain.Coupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
