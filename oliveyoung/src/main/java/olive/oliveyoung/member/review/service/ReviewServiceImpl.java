@@ -118,10 +118,12 @@ public class ReviewServiceImpl implements ReviewService {
      * Entity -> DTO 변환
      */
     private ReviewResponseDto toResponseDto(Review review) {
+        Products product = review.getProduct(); // ★ 반드시 product 꺼내기!
+
         return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
                 .userName(review.getUser().getUserName())
-                .productId(review.getProduct().getProductId())
+                .productId(product.getProductId())
                 .rating(review.getRating())
                 .texture(review.getTexture())
                 .skinType(review.getSkinType())
@@ -129,6 +131,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .skinConcern(review.getSkinConcern())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
+                // 상품 정보 추가
+                .productName(product.getProductName())         // 상품명 (필드명 맞추기!)
+                .imageUrl(product.getImageUrl())         // 상품 이미지
+                .brandName(product.getBrand().getBrandName())       // 브랜드명
                 .build();
+
     }
+
 }
