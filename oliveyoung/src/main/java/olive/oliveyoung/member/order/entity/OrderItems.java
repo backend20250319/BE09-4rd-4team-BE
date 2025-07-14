@@ -33,4 +33,7 @@ public class OrderItems {
 
     @Column(name = "price", nullable = false)
     private Integer price;
+
+    @Column(name = "has_review", nullable = false)
+    private boolean hasReview = false;
 }
