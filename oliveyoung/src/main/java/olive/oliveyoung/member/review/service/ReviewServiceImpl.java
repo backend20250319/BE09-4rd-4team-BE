@@ -8,7 +8,6 @@ import olive.oliveyoung.member.review.dto.ReviewResponseDto;
 import olive.oliveyoung.member.review.dto.ReviewUpdateDto;
 import olive.oliveyoung.member.review.entity.Review;
 import olive.oliveyoung.member.review.repository.ReviewRepository;
-import olive.oliveyoung.member.review.service.ReviewService;
 import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -26,10 +25,13 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    /**
+     * 리뷰 등록
+     */
     @Override
     @Transactional
-    public Long createReview(Long productId, ReviewRequestDto dto, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public Long createReview(Long productId, ReviewRequestDto dto, Long userNo) {
+        User user = userRepository.findById(userNo)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         Products product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
@@ -47,35 +49,38 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.save(review).getReviewId();
     }
 
-
-
+    /**
+     * 리뷰 삭제
+     */
     @Override
     @Transactional
-    public String deleteReview(Long reviewId, String userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, user.getUserNo())
+    public String deleteReview(Long reviewId, Long userNo) {
+        Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, userNo)
                 .orElseThrow(() -> new RuntimeException("해당 사용자의 리뷰를 찾을 수 없습니다."));
-
         reviewRepository.delete(review);
-
         return review.getProduct().getProductId() + "번 상품의 리뷰가 삭제되었습니다.";
     }
 
+    /**
+     * 리뷰 수정
+     */
     @Override
     @Transactional
-    public String updateReview(Long reviewId, ReviewUpdateDto dto, String userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, user.getUserNo())
+    public String updateReview(Long reviewId, ReviewUpdateDto dto, Long userNo) {
+        Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, userNo)
                 .orElseThrow(() -> new RuntimeException("해당 사용자의 리뷰를 찾을 수 없습니다."));
-
         review.setRating(dto.getRating());
         review.setContent(dto.getContent());
-
+        // 필요하다면 skinType, skinConcern, texture도 수정 가능
+        // review.setSkinType(dto.getSkinType());
+        // review.setSkinConcern(dto.getSkinConcern());
+        // review.setTexture(dto.getTexture());
         return review.getProduct().getProductId() + "번 상품의 리뷰가 수정되었습니다.";
     }
 
+    /**
+     * 상품별 리뷰 조회
+     */
     @Override
     public List<ReviewResponseDto> getReviewsByProduct(Long productId) {
         return reviewRepository.findByProduct_ProductId(productId).stream()
@@ -83,27 +88,19 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 유저별 리뷰 조회 (userNo 기반)
+     */
     @Override
-    public List<ReviewResponseDto> getReviewsByUser(String userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        return reviewRepository.findByUser_UserNo(user.getUserNo()).stream()
+    public List<ReviewResponseDto> getReviewsByUserNo(Long userNo) {
+        return reviewRepository.findByUser_UserNo(userNo).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    private ReviewResponseDto toResponseDto(Review review) {
-        return ReviewResponseDto.builder()
-                .reviewId(review.getReviewId())
-                .userName(review.getUser().getUserName())
-                .productId(review.getProduct().getProductId())
-                .rating(review.getRating())
-                .content(review.getContent())
-                .createdAt(review.getCreatedAt())
-                .updatedAt(review.getUpdatedAt())
-                .build();
-    }
-
+    /**
+     * 평균 평점
+     */
     @Override
     public double getAverageRating(Long productId) {
         List<Review> reviews = reviewRepository.findByProduct_ProductId(productId);
@@ -117,6 +114,29 @@ public class ReviewServiceImpl implements ReviewService {
         return Math.min(average, 5.0);
     }
 
+    /**
+     * Entity -> DTO 변환
+     */
+    private ReviewResponseDto toResponseDto(Review review) {
+        Products product = review.getProduct(); // ★ 반드시 product 꺼내기!
+
+        return ReviewResponseDto.builder()
+                .reviewId(review.getReviewId())
+                .userName(review.getUser().getUserName())
+                .productId(product.getProductId())
+                .rating(review.getRating())
+                .texture(review.getTexture())
+                .skinType(review.getSkinType())
+                .content(review.getContent())
+                .skinConcern(review.getSkinConcern())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
+                // 상품 정보 추가
+                .productName(product.getProductName())         // 상품명 (필드명 맞추기!)
+                .imageUrl(product.getImageUrl())         // 상품 이미지
+                .brandName(product.getBrand().getBrandName())       // 브랜드명
+                .build();
+
+    }
 
 }
-
