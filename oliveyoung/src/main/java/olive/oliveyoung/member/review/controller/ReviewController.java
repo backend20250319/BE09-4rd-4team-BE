@@ -26,7 +26,7 @@ public class ReviewController {
     @PostMapping("/products/{productId}/reviews")
     public ResponseEntity<?> createReview(@PathVariable Long productId,
                                           @RequestBody ReviewRequestDto dto,
-                                          @AuthenticationPrincipal CustomUserDetailsForReview userDetails) {
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long reviewId = reviewService.createReview(productId, dto, userDetails.getUserNo());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("success", true, "data", Map.of("reviewId", reviewId)));
@@ -36,7 +36,7 @@ public class ReviewController {
     @PutMapping("/reviews/{reviewId}")
     public ResponseEntity<?> updateReview(@PathVariable Long reviewId,
                                           @RequestBody ReviewUpdateDto dto,
-                                          @AuthenticationPrincipal CustomUserDetailsForReview userDetails) {
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
         reviewService.updateReview(reviewId, dto, userDetails.getUserNo());
         return ResponseEntity.ok(new ApiResponse<>(true, "리뷰가 수정되었습니다."));
     }
@@ -44,7 +44,7 @@ public class ReviewController {
     // 리뷰 삭제
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<?> deleteReview(@PathVariable Long reviewId,
-                                          @AuthenticationPrincipal CustomUserDetailsForReview userDetails) {
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
         reviewService.deleteReview(reviewId, userDetails.getUserNo());
         return ResponseEntity.ok(new ApiResponse<>(true, "리뷰가 삭제되었습니다."));
     }
@@ -72,7 +72,7 @@ public class ReviewController {
 
     // 로그인 사용자의 리뷰 목록 조회
     @GetMapping("/users/me/reviews")
-    public ResponseEntity<?> getMyReviews(@AuthenticationPrincipal CustomUserDetailsForReview userDetails) {
+    public ResponseEntity<?> getMyReviews(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             return ResponseEntity.status(401).body("인증 정보가 없습니다. (토큰을 확인하세요)");
         }
