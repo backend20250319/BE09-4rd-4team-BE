@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.common.CustomUserDetails; // CustomUserDetails import 추가
+import olive.oliveyoung.member.user.common.CustomUserDetailsForReview;
 import olive.oliveyoung.member.user.domain.User; // User import 추가
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,18 +36,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(jwtConfig.getPrefix().length() + 1);
 
             if (jwtTokenProvider.validateToken(token)) {
-                User user = jwtTokenProvider.getUserFromJWT(token); // User 객체 가져오기
-                CustomUserDetails customUserDetails = new CustomUserDetails(user); // CustomUserDetails 생성
+                User user = jwtTokenProvider.getUserFromJWT(token);
+                String requestURI = request.getRequestURI();
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(customUserDetails, null,
-                                customUserDetails.getAuthorities()); // CustomUserDetails와 권한 사용
+                UsernamePasswordAuthenticationToken authenticationToken;
+
+                if (requestURI.startsWith("/api/review")) {
+                    CustomUserDetailsForReview customUserDetails = new CustomUserDetailsForReview(user);
+                    authenticationToken = new UsernamePasswordAuthenticationToken(
+                            customUserDetails, null, customUserDetails.getAuthorities());
+                } else {
+                    CustomUserDetails customUserDetails = new CustomUserDetails(user);
+                    authenticationToken = new UsernamePasswordAuthenticationToken(
+                            customUserDetails, null, customUserDetails.getAuthorities());
+                }
 
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
+
         }
 
         filterChain.doFilter(request, response);
