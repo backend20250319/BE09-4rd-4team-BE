@@ -69,14 +69,17 @@ public class ReviewServiceImpl implements ReviewService {
     public String updateReview(Long reviewId, ReviewUpdateDto dto, Long userNo) {
         Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, userNo)
                 .orElseThrow(() -> new RuntimeException("해당 사용자의 리뷰를 찾을 수 없습니다."));
+
         review.setRating(dto.getRating());
         review.setContent(dto.getContent());
-        // 필요하다면 skinType, skinConcern, texture도 수정 가능
-        // review.setSkinType(dto.getSkinType());
-        // review.setSkinConcern(dto.getSkinConcern());
-        // review.setTexture(dto.getTexture());
+        // 프론트에서 값을 항상 보낸다면 바로 할당
+        review.setSkinType(dto.getSkinType());
+        review.setSkinConcern(dto.getSkinConcern());
+        review.setTexture(dto.getTexture());
+
         return review.getProduct().getProductId() + "번 상품의 리뷰가 수정되었습니다.";
     }
+
 
     /**
      * 상품별 리뷰 조회
