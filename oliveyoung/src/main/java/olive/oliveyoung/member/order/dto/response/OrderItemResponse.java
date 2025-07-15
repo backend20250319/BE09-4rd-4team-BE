@@ -20,6 +20,7 @@ public class OrderItemResponse {
     private Integer quantity;
     private Integer price;
     private String imageUrl;
+    private boolean hasReview;
 
     public static OrderItemResponse from(OrderItems item) {
         OrderItemResponse res =  new OrderItemResponse();
@@ -31,6 +32,7 @@ public class OrderItemResponse {
         res.setQuantity(item.getQuantity());
         res.setPrice(item.getPrice());
         res.setImageUrl(item.getProduct().getImageUrl());
+        res.setHasReview(item.isHasReview());
         return res;
     }
 }
