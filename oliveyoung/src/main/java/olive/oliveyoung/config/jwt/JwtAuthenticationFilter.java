@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import olive.oliveyoung.member.user.common.CustomUserDetails; // CustomUserDetails import 추가
-import olive.oliveyoung.member.user.common.CustomUserDetailsForReview;
 import olive.oliveyoung.member.user.domain.User; // User import 추가
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authenticationToken;
 
                 if (requestURI.startsWith("/api/review")) {
-                    CustomUserDetailsForReview customUserDetails = new CustomUserDetailsForReview(user);
+                    CustomUserDetails customUserDetails = new CustomUserDetails(user);
                     authenticationToken = new UsernamePasswordAuthenticationToken(
                             customUserDetails, null, customUserDetails.getAuthorities());
                 } else {
