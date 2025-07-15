@@ -84,6 +84,7 @@ public class OrderService {
                     orderItem.setProduct(cartItem.getProduct());
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setPrice(finalPrice);
+                    orderItem.setHasReview(false);
 
                     return orderItem;
                 })
@@ -132,8 +133,6 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
     }
-
-
 
     public List<OrderResponse> getAllOrders() {
         List<Orders> orders = orderRepository.findAll();
