@@ -31,6 +31,7 @@ public class AddressServiceImpl implements AddressService {
             user.getAddresses().forEach(address -> {
                 if (address.isDefault()) {
                     address.setDefault(false);
+                    addressRepository.save(address);
                 }
             });
         }

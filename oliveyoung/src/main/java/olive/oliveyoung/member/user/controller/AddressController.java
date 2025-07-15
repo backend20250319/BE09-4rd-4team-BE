@@ -1,6 +1,7 @@
 package olive.oliveyoung.member.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import olive.oliveyoung.member.user.common.ApiResponse;
 import olive.oliveyoung.member.user.common.CustomUserDetails;
 import olive.oliveyoung.member.user.dto.request.AddressRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/mypage/address")
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class AddressController {
     public ApiResponse<Void> addAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody AddressRequest addressRequest) {
         String userId = customUserDetails.getUsername();
         addressService.addAddress(userId, addressRequest);
+        log.info("[주소 등록 요청] userId={}, addressRequest={}", userId, addressRequest);
         return ApiResponse.success(null, HttpStatus.CREATED.value());
     }
 
