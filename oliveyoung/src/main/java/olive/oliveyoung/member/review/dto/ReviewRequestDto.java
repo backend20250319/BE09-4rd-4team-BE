@@ -17,5 +17,7 @@ public class ReviewRequestDto {
     private String skinType;
     private String skinConcern;
     private String texture;
+    private Long orderItemId;
+
 }
 
