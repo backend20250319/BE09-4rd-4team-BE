@@ -1,5 +1,6 @@
 package olive.oliveyoung.member.user.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import olive.oliveyoung.member.user.domain.Address;
@@ -13,6 +14,8 @@ public class AddressResponse {
     private String phone;
     private String streetAddress;
     private String detailAddress;
+
+    @JsonProperty("isDefault")
     private boolean isDefault;
 
     public static AddressResponse from(Address address) {

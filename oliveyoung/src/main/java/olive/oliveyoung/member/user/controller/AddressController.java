@@ -1,6 +1,7 @@
 package olive.oliveyoung.member.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import olive.oliveyoung.member.user.common.ApiResponse;
 import olive.oliveyoung.member.user.common.CustomUserDetails;
 import olive.oliveyoung.member.user.dto.request.AddressRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/mypage/address")
 @RequiredArgsConstructor
