@@ -7,6 +7,7 @@ import olive.oliveyoung.member.user.dto.request.AddressRequest;
 import olive.oliveyoung.member.user.dto.response.AddressResponse;
 import olive.oliveyoung.member.user.service.AddressService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,10 +53,12 @@ public class AddressController {
     }
 
     // 기본 배송지 설정
-    @PatchMapping("/{addressId}/default")
+    @PatchMapping("/default/{addressId}")
     public ApiResponse<Void> setDefaultAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long addressId) {
         String userId = customUserDetails.getUsername();
         addressService.setDefaultAddress(userId, addressId);
         return ApiResponse.success(null, HttpStatus.OK.value());
     }
+
+
 }
