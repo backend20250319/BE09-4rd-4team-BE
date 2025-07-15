@@ -65,9 +65,9 @@ public class SecurityConfig {
                 "http://localhost:3000", // 사용자 페이지
                 "http://localhost:3001"  // 관리자 페이지
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // ✅ 토큰 허용 시 true 필요
+        configuration.setAllowCredentials(true); // 토큰 허용 시 true 필요
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
