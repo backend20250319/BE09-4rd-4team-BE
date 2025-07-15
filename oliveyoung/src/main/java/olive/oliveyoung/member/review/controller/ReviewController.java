@@ -6,7 +6,6 @@ import olive.oliveyoung.member.review.dto.ReviewResponseDto;
 import olive.oliveyoung.member.review.dto.ReviewUpdateDto;
 import olive.oliveyoung.member.review.service.ReviewService;
 import olive.oliveyoung.member.user.common.CustomUserDetails;
-import olive.oliveyoung.member.user.common.CustomUserDetailsForReview;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

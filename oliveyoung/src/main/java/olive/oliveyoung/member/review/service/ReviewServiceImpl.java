@@ -1,6 +1,8 @@
 package olive.oliveyoung.member.review.service;
 
 import lombok.RequiredArgsConstructor;
+import olive.oliveyoung.member.order.entity.OrderItems;
+import olive.oliveyoung.member.order.repository.OrderItemsRepository;
 import olive.oliveyoung.member.product.entity.Products;
 import olive.oliveyoung.member.product.repository.ProductRepository;
 import olive.oliveyoung.member.review.dto.ReviewRequestDto;
@@ -12,7 +14,6 @@ import olive.oliveyoung.member.user.domain.User;
 import olive.oliveyoung.member.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderItemsRepository orderItemsRepository;
 
     /**
      * 리뷰 등록
@@ -46,7 +48,17 @@ public class ReviewServiceImpl implements ReviewService {
                 .texture(dto.getTexture())
                 .build();
 
-        return reviewRepository.save(review).getReviewId();
+        Long reviewId = reviewRepository.save(review).getReviewId();
+
+        // 주문아이템 hasReview true 처리
+        if (dto.getOrderItemId() != null) {
+            OrderItems orderItem = orderItemsRepository.findById(dto.getOrderItemId())
+                    .orElseThrow(() -> new RuntimeException("주문 아이템을 찾을 수 없습니다."));
+            orderItem.setHasReview(true);
+            orderItemsRepository.save(orderItem);
+        }
+
+        return reviewId;
     }
 
     /**
@@ -69,12 +81,13 @@ public class ReviewServiceImpl implements ReviewService {
     public String updateReview(Long reviewId, ReviewUpdateDto dto, Long userNo) {
         Review review = reviewRepository.findByReviewIdAndUser_UserNo(reviewId, userNo)
                 .orElseThrow(() -> new RuntimeException("해당 사용자의 리뷰를 찾을 수 없습니다."));
+
         review.setRating(dto.getRating());
         review.setContent(dto.getContent());
-        // 필요하다면 skinType, skinConcern, texture도 수정 가능
-        // review.setSkinType(dto.getSkinType());
-        // review.setSkinConcern(dto.getSkinConcern());
-        // review.setTexture(dto.getTexture());
+        review.setSkinType(dto.getSkinType());
+        review.setSkinConcern(dto.getSkinConcern());
+        review.setTexture(dto.getTexture());
+
         return review.getProduct().getProductId() + "번 상품의 리뷰가 수정되었습니다.";
     }
 
@@ -108,8 +121,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         double total = reviews.stream().mapToDouble(Review::getRating).sum();
         double average = total / reviews.size();
-
-        // 평균을 소수점 1자리로 반올림하고 최대 5.0으로 제한
         average = Math.round(average * 10.0) / 10.0;
         return Math.min(average, 5.0);
     }
@@ -118,8 +129,7 @@ public class ReviewServiceImpl implements ReviewService {
      * Entity -> DTO 변환
      */
     private ReviewResponseDto toResponseDto(Review review) {
-        Products product = review.getProduct(); // ★ 반드시 product 꺼내기!
-
+        Products product = review.getProduct();
         return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
                 .userName(review.getUser().getUserName())
@@ -131,12 +141,9 @@ public class ReviewServiceImpl implements ReviewService {
                 .skinConcern(review.getSkinConcern())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
-                // 상품 정보 추가
-                .productName(product.getProductName())         // 상품명 (필드명 맞추기!)
-                .imageUrl(product.getImageUrl())         // 상품 이미지
-                .brandName(product.getBrand().getBrandName())       // 브랜드명
+                .productName(product.getProductName())
+                .imageUrl(product.getImageUrl())
+                .brandName(product.getBrand().getBrandName())
                 .build();
-
     }
-
 }

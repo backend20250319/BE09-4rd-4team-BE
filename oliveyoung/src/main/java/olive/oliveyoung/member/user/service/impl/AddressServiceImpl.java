@@ -31,6 +31,7 @@ public class AddressServiceImpl implements AddressService {
             user.getAddresses().forEach(address -> {
                 if (address.isDefault()) {
                     address.setDefault(false);
+                    addressRepository.save(address);
                 }
             });
         }
@@ -107,6 +108,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
     public void setDefaultAddress(String userId, Long addressId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));

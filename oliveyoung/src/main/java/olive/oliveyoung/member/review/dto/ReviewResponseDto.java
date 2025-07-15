@@ -29,6 +29,7 @@ public class ReviewResponseDto {
     private String imageUrl;
     private Integer discountedPrice;
 
+
     public static ReviewResponseDto from(Review review) {
         return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
