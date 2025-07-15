@@ -10,15 +10,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminProductRequestDTO {
-
     private String productName;
     private String categoryName;
     private Integer stock;
     private Integer originalPrice;
-
     private String imageUrl;
     private String description;
-
     private String state;
-
+    private Long brandId;
 }
+
