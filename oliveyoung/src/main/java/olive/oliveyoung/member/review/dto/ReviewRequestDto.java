@@ -17,6 +17,7 @@ public class ReviewRequestDto {
     private String skinType;
     private String skinConcern;
     private String texture;
-    private List<String> images; // 파일명이든 URL 키든
+    private Long orderItemId;
+
 }
 
