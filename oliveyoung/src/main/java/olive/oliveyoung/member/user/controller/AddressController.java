@@ -27,7 +27,6 @@ public class AddressController {
     public ApiResponse<Void> addAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody AddressRequest addressRequest) {
         String userId = customUserDetails.getUsername();
         addressService.addAddress(userId, addressRequest);
-        log.info("[주소 등록 요청] userId={}, addressRequest={}", userId, addressRequest);
         return ApiResponse.success(null, HttpStatus.CREATED.value());
     }
 
