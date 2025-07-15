@@ -11,9 +11,11 @@ import java.util.Collections;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
+    private final Long userNo;
 
     public CustomUserDetails(User user) {
         this.user = user;
+        this.userNo = user.getUserNo();
     }
 
     public User getUser() {
@@ -33,6 +35,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getUsername() {
         return user.getUserId();
+    }
+
+    public Long getUserNo() {
+        return user.getUserNo();
     }
 
     @Override
