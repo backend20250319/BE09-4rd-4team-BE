@@ -29,8 +29,7 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public List<AdminUserSummaryResponse> getAllUsersForAdmin() {
-        return userRepository.findAll().stream()
-                .filter(user -> !"admin".equals(user.getUserId())) // userId가 "admin"이 아닌 경우만
+        return userRepository.findByRole(Role.ADMIN).stream()
                 .map(user -> new AdminUserSummaryResponse(
                         user.getUserId(),
                         user.getUserName(),
@@ -40,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
                 ))
                 .collect(Collectors.toList());
     }
+
 
 
     /**
@@ -87,4 +87,5 @@ public class AdminServiceImpl implements AdminService {
 
         adminRepository.save(adminUser);
     }
+
 }
