@@ -14,6 +14,7 @@ public class AdminProductRequestDTO {
     private String categoryName;
     private Integer stock;
     private Integer originalPrice;
+    private Integer discountedPrice; // <- 할인 가격 필드 추가!
     private String imageUrl;
     private String description;
     private String state;
