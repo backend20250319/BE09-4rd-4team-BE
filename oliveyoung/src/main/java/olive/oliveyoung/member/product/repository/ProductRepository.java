@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Products, Long> {
 
-    @Query("SELECT p FROM Products p JOIN FETCH p.brand JOIN FETCH p.badges")
+    @Query("SELECT p FROM Products p JOIN FETCH p.brand LEFT JOIN FETCH p.badges")
     List<Products> findAll(Sort sort);
 
-    @Query("SELECT p FROM Products p JOIN FETCH p.brand JOIN FETCH p.badges WHERE p.productId = :productId")
+    @Query("SELECT p FROM Products p JOIN FETCH p.brand LEFT JOIN FETCH p.badges WHERE p.productId = :productId")
     Optional<Products> findById(Long productId);
 
     List<Products> findByProductNameContainingIgnoreCase(String keyword, Sort sort);
