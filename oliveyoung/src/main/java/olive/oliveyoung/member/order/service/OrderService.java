@@ -158,15 +158,15 @@ public class OrderService {
 
         return orders.stream()
                 .map(order -> {
-                    // Calculate total price from order items
+
                     int totalPrice = order.getOrderItems().stream()
                             .mapToInt(item -> item.getProduct().getDiscountedPrice() * item.getQuantity())
                             .sum();
 
-                    // Format date as string (YYYY-MM-DD)
+
                     String formattedDate = order.getCreatedAt().toLocalDate().toString();
 
-                    // Map status enum to Korean string
+
                     String statusStr;
                     switch (order.getStatus()) {
                         case RECEIVED:
