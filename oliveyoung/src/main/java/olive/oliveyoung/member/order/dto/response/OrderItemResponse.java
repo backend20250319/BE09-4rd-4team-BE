@@ -21,7 +21,7 @@ public class OrderItemResponse {
     private Integer price;
     private String imageUrl;
     private boolean hasReview;
-
+// test 이스터에그
     public static OrderItemResponse from(OrderItems item) {
         OrderItemResponse res =  new OrderItemResponse();
         res.setOrderItemId(item.getOrderItemId());
