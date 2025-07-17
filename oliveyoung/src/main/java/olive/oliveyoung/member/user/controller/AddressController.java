@@ -11,9 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
+// ci cd 잘되는지 확인할게요
 @Slf4j
 @RestController
 @RequestMapping("/api/mypage/address")
