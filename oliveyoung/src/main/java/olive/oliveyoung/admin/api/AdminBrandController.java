@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/admin/brands") // 실제로 어떤 경로든 무관, 정확하게 맞춰야 함
 @CrossOrigin(origins ="http://localhost:3000")
 
-
+// 발표용 이스터에그 테스트 주석
 public class AdminBrandController {
 
 
