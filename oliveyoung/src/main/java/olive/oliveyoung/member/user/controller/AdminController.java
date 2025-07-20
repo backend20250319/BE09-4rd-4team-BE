@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-// 수정
+// argocd를 위한 수정
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/users")
