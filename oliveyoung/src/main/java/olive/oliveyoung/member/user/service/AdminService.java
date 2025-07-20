@@ -4,7 +4,7 @@ import olive.oliveyoung.member.user.dto.response.AdminUserDetailResponse;
 import olive.oliveyoung.member.user.dto.response.AdminUserSummaryResponse;
 
 import java.util.List;
-
+// argocd test를 위한 수정
 public interface AdminService {
 
     List<AdminUserSummaryResponse> getAllUsersForAdmin();
