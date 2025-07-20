@@ -4,7 +4,6 @@ import olive.oliveyoung.member.user.dto.request.PasswordUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserSignUpRequest;
 import olive.oliveyoung.member.user.dto.request.UserUpdateRequest;
 import olive.oliveyoung.member.user.dto.request.UserWithdrawRequest;
-import olive.oliveyoung.member.user.dto.response.UserInfoResponse;
 
 import java.util.Optional;
 
