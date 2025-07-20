@@ -85,7 +85,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 ## 🔍 2-2. 사용자 영역 요구사항
 
-### 1. 🔐 회원 관리
+### 2-3. 🔐 회원 관리
 
 | TC ID   | 기능 명                        | 목적/설명                                   |
 |---------|-------------------------------|---------------------------------------------|
@@ -103,7 +103,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 ---
 
-### 2. 🏠 배송지 관리
+### 2-4. 🏠 배송지 관리
 
 | TC ID   | 기능 명              | 목적/설명                        |
 |---------|---------------------|----------------------------------|
@@ -116,7 +116,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 ---
 
-### 3. 🛒 상품 관리
+### 2-5. 🛒 상품 관리
 
 | TC ID   | 기능 명                       | 목적/설명                         |
 |---------|------------------------------|-----------------------------------|
@@ -133,7 +133,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 ---
 
-### 4.  🛍️ 주문/장바구니/쿠폰 관리
+### 2-6.  🛍️ 주문/장바구니/쿠폰 관리
 
 | TC ID   | 기능 명             | 목적/설명                        |
 |---------|--------------------|----------------------------------|
@@ -150,7 +150,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 ---
 
-### 5. ⭐ 리뷰 관리
+### 2-7. ⭐ 리뷰 관리
 
 | TC ID   | 기능 명                 | 목적/설명                          |
 |---------|------------------------|------------------------------------|
@@ -163,7 +163,7 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 
 
-## 🤝 2-3. 관리자 영역 요구사항
+## 🤝 2-8. 관리자 영역 요구사항
 
 | TC ID   | 기능 명              | 목적/설명                                |
 |---------|---------------------|------------------------------------------|
@@ -188,13 +188,15 @@ JWT 기반의 로그인 및 인증을 적용해 실제 서비스와 유사한 �
 
 | 항목               | 사용 기술                                                                                                                                                                                                    |
 |--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **언어**           | ![Java](https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white)                                                                                                             |
-| **프레임워크**     | ![Spring](https://img.shields.io/badge/SPRING-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Spring Boot](https://img.shields.io/badge/SPRINGBOOT-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)  |
+| **프론트엔드 언어** | ![JavaScript](https://img.shields.io/badge/JAVASCRIPT-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)                                                                                         |
+| **프론트엔드 라이브러리** | ![React](https://img.shields.io/badge/REACT-61DAFB?style=for-the-badge&logo=react&logoColor=black)                                                                                         |
+| **스타일링 도구**     | ![TailwindCSS](https://img.shields.io/badge/TAILWIND_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)  
+| **백엔드 언어**           | ![Java](https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white)                                                                                                             |
+| **백엔드 ㅂ프레임워크**     | ![Spring](https://img.shields.io/badge/SPRING-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Spring Boot](https://img.shields.io/badge/SPRINGBOOT-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)  |
 | **데이터베이스**   | ![MySQL](https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)                                                                                                           |
 | **협업/버전관리**  | ![GitHub](https://img.shields.io/badge/GITHUB-181717?style=for-the-badge&logo=github&logoColor=white) ![Git](https://img.shields.io/badge/GIT-F05032?style=for-the-badge&logo=git&logoColor=white)             |
 | **배포/운영**      | ![Docker](https://img.shields.io/badge/DOCKER-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Kubernetes](https://img.shields.io/badge/KUBERNETES-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white) ![Jenkins](https://img.shields.io/badge/JENKINS-D24939?style=for-the-badge&logo=jenkins&logoColor=white) ![ArgoCD](https://img.shields.io/badge/ARGOCD-EF7B4D?style=for-the-badge&logo=argo&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white) |
-
-
+                                                                                    
 ---
 # 📝 5. 회고
 
